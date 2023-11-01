@@ -3,6 +3,7 @@
 use App\Http\Controllers\api\v1\FontController;
 use App\Http\Controllers\api\v1\TextController;
 use App\Http\Controllers\api\v1\ImageController;
+use App\Http\Controllers\api\v1\PlanController;
 use App\Http\Controllers\api\v1\FrameController;
 use App\Http\Controllers\api\v1\TemplateController;
 use App\Http\Controllers\api\v1\UserController;
@@ -35,6 +36,16 @@ Route::group([
     Route::get('/templates', [TemplateController::class, 'getAll']);
 
     Route::get('/templates/list', [TemplateController::class, 'getTemplateList']);
+
+    Route::get('/plans', [PlanController::class, 'getPlans']); // User's plans
+
+    Route::get('/getCustomer', [PlanController::class, 'getCustomer']); // Get Customer
+    
+    Route::post('/subscribe', [PlanController::class, 'subscribe']);// Subscribe the plan
+
+    Route::get('/payment/change/{plan}', [PlanController::class, 'changePlan']);
+    Route::get('/payment-cancel', [PlanController::class, 'cancel']);
+    Route::get('/payment-restore', [PlanController::class, 'storePlan']);
 
     Route::prefix('design')->group(function () {
 

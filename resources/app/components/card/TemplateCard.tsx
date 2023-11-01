@@ -11,7 +11,6 @@ const TemplateCard = (props: {
   onClick: (id: number) => void;
 }) => {
   const { templateId, title, size, image, extra, onClick } = props;
-
   return (
     <Card
       extra={`hover:cursor-pointer flex flex-col w-full h-full !p-4 3xl:p-![18px] bg-white ${extra}`}

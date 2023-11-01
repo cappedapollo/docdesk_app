@@ -23,6 +23,7 @@ const CreateGraphic = () => {
 
   const onTapTemplate = useCallback(
     (id: number) => {
+      console.log(id);
       const pageData = JSON.parse(templateList[id].data);
       dispatch(setCurDesignId(-1));
       dispatch(setCurDesignName(templateList[id].name));

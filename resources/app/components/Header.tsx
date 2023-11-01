@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useCallback, useState } from "react";
 import Dropdown from "@/components/dropdown";
+import { useAppSelector } from "@/store/hooks";
 
 export default function Header() {
   const [navbar, setNavbar] = useState<boolean>(false);
@@ -9,6 +10,8 @@ export default function Header() {
     localStorage.removeItem("userToken");
     navigate("/user");
   };
+
+  const email = useAppSelector((state) => state.auth.email);
 
   return (
     <header>
@@ -105,7 +108,7 @@ export default function Header() {
                           <div className="mt-3 ml-4">
                             <div className="flex items-center gap-2">
                               <p className="text-sm font-bold text-navy-700 dark:text-white">
-                                {"www@gmail.com"}
+                                {email}
                               </p>{" "}
                             </div>
                           </div>

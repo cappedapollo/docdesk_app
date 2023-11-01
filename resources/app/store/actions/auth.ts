@@ -9,8 +9,10 @@ export const SignInAction = (username: string, password: string) => {
       const {
         data: { success, message, token },
       } = await signIn(username, password);
+      console.log(token)
       localStorage.setItem("userToken", token);
-      dispatch(setResponse(success));
+      localStorage.setItem("email", username);
+      dispatch(setResponse({success, email: username}));
       dispatch(setNotifyMsg(message));
     } catch (e) {
       dispatch(setNotifyMsg(e.message));
@@ -32,7 +34,7 @@ export const SignUpAction = (
         data: { success, message },
       } = await signUp(name, email, password, password_confirmation);
 
-      dispatch(setResponse(success));
+      dispatch(setResponse({success, email}));
       dispatch(setNotifyMsg(message));
     } catch (e) {
       dispatch(setNotifyMsg(e.message));

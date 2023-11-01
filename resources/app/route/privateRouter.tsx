@@ -5,6 +5,8 @@ import RouteLoading from "@/components/RouteLoading";
 import Error404 from "@/components/404";
 import SavedGraphics from "@/pages/design/SavedGraphics";
 import CreateGraphic from "@/pages/design/CreateGraphic";
+import GoPro from "@/pages/user/GoPro";
+import Payment from "@/pages/user/Payment";
 
 const EditorHome = React.lazy(() => import("@/pages/design/EditorHome"));
 
@@ -22,6 +24,8 @@ export default function UserPrivateRoute(props) {
         />
         <Route index element={<SavedGraphics />} />
         <Route path="/create-graphic" element={<CreateGraphic />} />
+        <Route path="/go-pro" element={<GoPro />} />
+        <Route path="/payment/:plan" element={<Payment />} />
       </Route>
       <Route path="*" element={<Error404 />} />
     </Routes>

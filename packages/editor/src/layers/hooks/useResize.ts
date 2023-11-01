@@ -12,8 +12,8 @@ import { BoxData, BoxSize, Delta, getTransformStyle } from '@lidojs/core';
 
 export const useResize = (getData: () => BoxData) => {
     const { frameScale } = useEditor((state) => ({ frameScale: state.scale }));
-    const MIN_WIDTH = 20;
-    const MIN_HEIGHT = 20;
+    const MIN_WIDTH = 4;
+    const MIN_HEIGHT = 4;
     return useMemo(
         () => ({
             getResized: (

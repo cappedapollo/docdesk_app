@@ -1,4 +1,4 @@
-export const data = [
+export const sampleData = [
   {
     locked: false,
     layers: {
@@ -191,47 +191,48 @@ export const data = [
           boxSize: { width: 1640, height: 924 },
           position: { x: 0, y: 0 },
           rotate: 0,
-          color: "rgb(255, 255, 255,0)",
+          color: "rgba(255, 255, 255, 0)",
           image: null,
         },
         locked: false,
-        child: ["100000"],
+        child: [],
         waterMark: true,
         parent: "ROOT",
-      },
-      "100000": {
-        type: { resolvedName: "TextLayer" },
-        props: {
-          text: '<p style="font-family: Chewy; color: rgba(0, 0, 0,0.5); font-size: 42px; text-align: center; line-height: 1.4; letter-spacing: 0em;"><strong>docdesk</strong></p>',
-          position: { x: 527.1390728476821, y: 243.582179409994 },
-          boxSize: {
-            width: 536.3009995574356,
-            height: 196.6429861529199,
-            x: 523.1390728476821,
-            y: 259.9867549668875,
-          },
-          scale: 1.6664659843467788,
-          rotate: 0,
-          fonts: [
-            {
-              name: "Chewy",
-              fonts: [
-                {
-                  urls: [
-                    "https://api-gilt-one.vercel.app/assets/liquid-editor/fonts/raw/master/src/fonts/Chewy/Chewy-Regular.woff2",
-                  ],
-                },
-              ],
-            },
-          ],
-          colors: ["rgb(0, 0, 0)"],
-          fontSizes: [42],
-        },
-        waterMark: true,
-        locked: false,
-        child: [],
-        parent: "0-waterMark",
       },
     },
   },
 ];
+
+export const waterMarkUnitData = {
+  type: { resolvedName: "TextLayer" },
+  props: {
+    text: '<p style="font-family: Chewy; color: rgba(255, 0, 0, 0.1); font-size: 42px; text-align: center; line-height: 1.4; letter-spacing: 0em;"><strong>docdesk</strong></p>',
+    position: { x: 0, y: 0 },
+    boxSize: {
+      width: 150,
+      height: 80,
+      x: 0,
+      y: 0,
+    },
+    scale: 0.7,
+    rotate: 0,
+    fonts: [
+      {
+        name: "Chewy",
+        fonts: [
+          {
+            urls: [
+              "https://api-gilt-one.vercel.app/assets/liquid-editor/fonts/raw/master/src/fonts/Chewy/Chewy-Regular.woff2",
+            ],
+          },
+        ],
+      },
+    ],
+    colors: ["rgb(0, 0, 0)"],
+    fontSizes: [42],
+  },
+  waterMark: true,
+  locked: false,
+  child: [],
+  parent: "0-waterMark",
+}

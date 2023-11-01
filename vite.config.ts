@@ -12,7 +12,8 @@ const __dirname = path.dirname(new URL(import.meta.url).pathname);
 const alias = Object.entries(compilerOptions.paths).reduce((acc, [key, [dist, src]]) => {
     return {
         ...acc,
-        [key]: path.resolve(__dirname, '../', src),
+        // [key]: path.resolve(__dirname, '../', src),
+        [key]: path.resolve(src),
     };
 }, {});
 
@@ -43,7 +44,8 @@ export default defineConfig({
     resolve: {
         alias: {
             ...alias,
-            '@': path.resolve(__dirname, 'resources/app'),
+            // '@': path.resolve(__dirname, 'resources/app'),
+            '@': path.resolve('resources/app'),
         },
     },
 });

@@ -51,7 +51,7 @@ const SignUp = () => {
 
   useEffect(() => {
     if (bSuccess) {
-      dispatch(setResponse(false));
+      dispatch(setResponse(null));
       navigate("/signin");
     }
   }, [bSuccess]);
