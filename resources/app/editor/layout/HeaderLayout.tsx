@@ -18,6 +18,12 @@ const HeaderLayout: ForwardRefRenderFunction<
   const uploadRef = useRef<HTMLInputElement>(null);
   const { actions, query } = useEditor();
   const curDesignName = useAppSelector((state) => state.designs.curDesignName);
+  const subscribed = useAppSelector(
+    (state) =>
+      state.auth.authUser &&
+      state.auth.authUser.active &&
+      !state.auth.authUser.cancelled
+  );
 
   const handleSave = () => {
     const saveTime = String(Date.now());
@@ -63,21 +69,23 @@ const HeaderLayout: ForwardRefRenderFunction<
         </div>
       </div>
       <div css={{ display: "flex", alignItems: "center" }}>
-        <div
-          className="px-2.5 py-2 text-white bg-blue-700 rounded-lg hover:bg-blue-800"
-          css={{
-            margin: "0 16px",
-            cursor: "pointer",
-            color: "#fff",
-            fontWeight: 700,
-            ":hover": {
-              textDecoration: "underline",
-            },
-          }}
-          onClick={handleSave}
-        >
-          Save
-        </div>
+        {subscribed && (
+          <div
+            className="px-2.5 py-2 text-white bg-blue-700 rounded-lg hover:bg-blue-800"
+            css={{
+              margin: "0 16px",
+              cursor: "pointer",
+              color: "#fff",
+              fontWeight: 700,
+              ":hover": {
+                textDecoration: "underline",
+              },
+            }}
+            onClick={handleSave}
+          >
+            Save
+          </div>
+        )}
       </div>
     </div>
   );

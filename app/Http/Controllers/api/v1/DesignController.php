@@ -11,8 +11,11 @@ class DesignController extends BaseController
 
     public function saveDesign(Request $request){
         if($request->file('file') != null){
-            $thumbnail_path = $request->file('file')->store('public/thumbnail');
-            $thumbnail_path = str_replace('public',"/storage",$thumbnail_path);
+            // $thumbnail_path = $request->file('file')->store('public/thumbnail');
+            // $thumbnail_path = str_replace('public',"/storage",$thumbnail_path);
+            $filename = time().'.'.$request->file->extension();  
+            $request->file->move(public_path('uploads/thumbnail_path'), $filename);
+            $thumbnail_path = '/uploads/thumbnail_path/'.$filename;
         }
         else{
             $thumbnail_path = "";

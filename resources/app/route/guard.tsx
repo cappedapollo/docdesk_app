@@ -2,16 +2,27 @@ import { useAppDispatch } from "@/store/hooks";
 import { setResponse } from "@/store/reducers/auth";
 import { useLocation, Navigate } from "react-router-dom";
 import { useAsync } from "react-use";
+import { useAppSelector } from "@/store/hooks";
+import { signInWithToken } from "@/service/auth";
 
 export default function RequireAuth({ children }: { children: JSX.Element }) {
   let location = useLocation();
   const dispatch = useAppDispatch();
 
   useAsync(async () => {
-    dispatch(
-      setResponse({ success: true, email: localStorage.getItem("email") })
-    );
+    if (localStorage.getItem("userToken")) {
+      const res = await signInWithToken();
+      if (res.data.success) {
+        dispatch(setResponse({ bSuccess: true, authUser: res.data.user }));
+      } else {
+        localStorage.removeItem("userToken");
+        dispatch(setResponse({ bSuccess: false }));
+      }
+    }
   }, []);
+
+  const isAuthenticated = useAppSelector((state) => state.auth.bSuccess);
+
   if (!localStorage.getItem("userToken")) {
     return <Navigate to="/signin" state={{ from: location }} replace />;
   }

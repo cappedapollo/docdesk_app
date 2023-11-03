@@ -1,4 +1,4 @@
-import React, {
+import {
   FC,
   Fragment,
   useCallback,
@@ -29,6 +29,8 @@ import { rectangleInsideAnother } from "../ultils/2d/rectangleInsideAnother";
 import { getTransformStyle, GlobalStyle, SerializedPage } from "@lidojs/core";
 import { getPosition, isMouseEvent, isTouchEvent } from "@lidojs/utils";
 import { useUsedFont } from "../layers/hooks/useUsedFont";
+import { getWaterMarkedData } from "@/editor/data";
+import { sampleData } from "@/editor/data";
 
 interface DesignFrameProps {
   data: SerializedPage[];
@@ -37,6 +39,7 @@ interface DesignFrameProps {
 }
 const DesignFrame: FC<DesignFrameProps> = ({
   data,
+  subscribed,
   isProValue,
   onSavedThumbnail,
 }) => {
@@ -52,7 +55,6 @@ const DesignFrame: FC<DesignFrameProps> = ({
   const [showPageSettings, setShowPageSettings] = useState(false);
   useShortcut(frameRef.current);
   const {
-    isPro,
     savedDate,
     actions,
     scale,
@@ -67,6 +69,7 @@ const DesignFrame: FC<DesignFrameProps> = ({
     dragData,
     imageEditor,
     pageSize,
+    query,
   } = useEditor((state) => {
     const hoveredPage = parseInt(Object.keys(state.hoveredLayer)[0]);
     const hoverLayerId = state.hoveredLayer[hoveredPage];
@@ -100,9 +103,12 @@ const DesignFrame: FC<DesignFrameProps> = ({
     onMovePage,
     onMovePageEnd,
   } = useZoomPage(frameRef, pageRef, pageContainerRef);
+
   useEffect(() => {
-    actions.setData(data);
-  }, [data, isPro, actions]);
+    // actions.setData(data);
+    // New code,
+    actions.setData(subscribed ? data : getWaterMarkedData(data));
+  }, [data, subscribed, actions]);
 
   useEffect(() => {
     actions.setProValue(isProValue);
@@ -381,6 +387,13 @@ const DesignFrame: FC<DesignFrameProps> = ({
                   }}
                   onClick={() => {
                     actions.addPage();
+                    // New code.
+                    actions.setPage(
+                      activePage + 1,
+                      getWaterMarkedData(
+                        JSON.parse(JSON.stringify(sampleData))
+                      )[0]
+                    );
                   }}
                 >
                   Add Page
@@ -426,6 +439,11 @@ const DesignFrame: FC<DesignFrameProps> = ({
           }}
           onClick={() => {
             actions.addPage();
+            // New code.
+            actions.setPage(
+              activePage + 1,
+              getWaterMarkedData(JSON.parse(JSON.stringify(sampleData)))[0]
+            );
           }}
         >
           <PlusIcon />

@@ -1,18 +1,17 @@
 import axios from "axios";
+import authAxios from "@/service/service";
 import { BASE_URL } from "./service";
+
+export const signInWithToken = async () => {
+  return await authAxios.post(BASE_URL + "/auth/signinWithToken");
+};
+
 
 export const signIn = async (email: string, password: string) => {
   return await axios.post(BASE_URL + "/auth/signin", {
     email,
     password,
   });
-
-  /*.then((response) => {
-      if (response.data.accessToken) {
-        localStorage.setItem("user", JSON.stringify(response.data));
-      }
-      return response.data;
-    });*/
 };
 
 export const signUp = async (

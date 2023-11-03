@@ -1,4 +1,4 @@
-import { useParams, useLocation, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   CardElement,
   Elements,
@@ -11,6 +11,9 @@ import axios from "@/service/service";
 import { BASE_URL } from "@/service/service";
 import { useAppDispatch } from "@/store/hooks";
 import { setNotifyMsg } from "@/store/reducers/share";
+import CardholderIcon from "@duyank/icons/regular/Cardholder";
+import PartialLoading from "@/components/PartialLoading";
+import { SignInWithTokenAction } from "@/store/actions/auth";
 
 const stripePromise = loadStripe(
   "pk_test_51NywJ7B6zGBDQPnqttClPsJSn3ot2BfqW8NIY5sgyChLFH1vAVh3JeTuu5CTct7cCIxoMjUtf45PSBqS0OejneWG00OQJa4uVq"
@@ -64,7 +67,7 @@ const CardSetupForm = ({ plan, ...props }) => {
     }
 
     // Create the PaymentIntent and obtain clientSecret from your server endpoint
-    const res = await axios.get(BASE_URL + "/getCustomer");
+    const res = await axios.get(BASE_URL + "/plan/getCustomer");
 
     const data = res.data;
 
@@ -86,16 +89,18 @@ const CardSetupForm = ({ plan, ...props }) => {
           dispatch(setNotifyMsg(result.error.message));
         } else {
           setLoading(false);
-          console.log(result.setupIntent.payment_method);
-          const res = await axios.post(BASE_URL + "/subscribe", {
+
+          const res = await axios.post(BASE_URL + "/plan/subscribe", {
             plan,
             tokenInput: result.setupIntent.payment_method,
           });
+
           const data = res.data;
-          if (data === "success") {
-            dispatch(setNotifyMsg("Payment Success."));
+          if (data.success) {
+            dispatch(setNotifyMsg(data.message));
+            dispatch(SignInWithTokenAction());
             navigate("/user/go-pro");
-          } else dispatch(setNotifyMsg("Payment Failed."));
+          } else dispatch(setNotifyMsg(data.message));
         }
       });
   };
@@ -111,24 +116,26 @@ const CardSetupForm = ({ plan, ...props }) => {
   };
 
   return (
-    <div className="rounded-2xl bg-gray-50 py-10 ring-1 ring-inset ring-gray-900/5 lg:flex lg:flex-col lg:py-16">
-      <div className="mx-auto max-w-xs px-8">
+    <div className="relative rounded-2xl bg-gray-50 py-10 ring-1 ring-inset ring-gray-900/5 lg:flex lg:flex-col lg:py-16">
+      {loading && <PartialLoading />}
+      <div className="mx-auto max-w-md px-8">
         <form onSubmit={handleCardSetup}>
           <p className="text-base font-semibold text-gray-600 mb-4">
             Payment Information
           </p>
-          <div className="mb-2">
+          <div className="mb-2 relative flex items-center">
+            <CardholderIcon className="absolute ml-2 text-xl text-gray-600" />
             <input
               placeholder="Cardholder Name"
-              className="w-full border border-gray rounded-md p-2 focus:outline-none"
+              className="w-full border border-gray rounded-md p-2 focus:outline-none pl-9"
               onChange={(e: ChangeEvent<HTMLInputElement>) =>
                 setCardHolderName(e.target.value)
               }
             />
           </div>
 
-          <div className="p-2 mb-1">
-            <CardElement onChange={onCardElementChange} s />
+          <div className="border border-gray rounded-md px-2 py-3 bg-white mb-1">
+            <CardElement onChange={onCardElementChange} />
           </div>
 
           <div className="text-sm text-red-600 mb-2">{cardErr}</div>

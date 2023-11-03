@@ -5,6 +5,8 @@ import XIcon from "@duyank/icons/regular/X";
 import { isMobile } from "react-device-detect";
 import { useEditor } from "@lidojs/editor";
 import { SerializedPage } from "@lidojs/core";
+import { useAppSelector } from "@/store/hooks";
+import { getWaterMarkedData } from "@/editor/data";
 interface Template {
   img: string;
   data: string;
@@ -12,6 +14,13 @@ interface Template {
 const TemplateContent: FC<{ onClose: () => void }> = ({ onClose }) => {
   const [templates, setTemplates] = useState<Template[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const subscribed = useAppSelector(
+    (state) =>
+      state.auth.authUser &&
+      state.auth.authUser.active &&
+      !state.auth.authUser.cancelled
+  );
+
   const { actions, activePage } = useEditor((state) => ({
     activePage: state.activePage,
   }));
@@ -21,7 +30,10 @@ const TemplateContent: FC<{ onClose: () => void }> = ({ onClose }) => {
     setIsLoading(false);
   }, []);
   const addPage = async (data: SerializedPage) => {
-    actions.setPage(activePage, data);
+    actions.setPage(
+      activePage,
+      subscribed ? data : getWaterMarkedData([data])[0]
+    );
     if (isMobile) {
       onClose();
     }

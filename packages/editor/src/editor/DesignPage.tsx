@@ -48,6 +48,8 @@ import { getPosition } from "@lidojs/utils";
 import { LayerDataRef } from "../types";
 import { VideoLayerProps } from "../layers/VideoLayer";
 import { ImageLayerProps } from "../layers/ImageLayer";
+import { getWaterMarkedData } from "@/editor/data";
+import { sampleData } from "@/editor/data";
 
 export interface PageProps {
   pageIndex: number;
@@ -499,7 +501,15 @@ const DesignPage: ForwardRefRenderFunction<HTMLDivElement, PageProps> = (
                 background: "rgba(64, 87, 109, 0.07)",
               },
             }}
-            onClick={() => actions.addPage(pageIndex)}
+            onClick={() => {
+              console.log(pageIndex);
+              actions.addPage(pageIndex);
+              // New code.
+              actions.setPage(
+                pageIndex + 1,
+                getWaterMarkedData(JSON.parse(JSON.stringify(sampleData)))[0]
+              );
+            }}
           >
             <FilePlusIcon />
           </div>

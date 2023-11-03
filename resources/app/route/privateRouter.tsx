@@ -14,7 +14,7 @@ export default function UserPrivateRoute(props) {
   return (
     <Routes>
       <Route path="/" element={<UserRootLayout />}>
-        <Route
+      <Route
           path="/editor"
           element={
             <React.Suspense fallback={<RouteLoading />}>

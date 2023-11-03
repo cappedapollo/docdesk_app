@@ -1,14 +1,17 @@
+import PartialLoading from "@/components/PartialLoading";
 import axios from "@/service/service";
 import { BASE_URL } from "@/service/service";
+import { SignInWithTokenAction } from "@/store/actions/auth";
 import { useAppDispatch } from "@/store/hooks";
 import { setNotifyMsg } from "@/store/reducers/share";
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
 import { useAsync } from "react-use";
 
 interface Plan {
   id: Number;
   cancelled: Boolean;
   cost: string;
+  slug: string;
   ended: Boolean;
   ends_at: any;
   stripe_plan: string;
@@ -19,10 +22,16 @@ interface Plan {
 const GoPro = () => {
   const [plans, setPlans] = useState<Plan[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [sub, setSub] = useState(false);
   const dispatch = useAppDispatch();
 
   useAsync(async () => {
-    const response = await axios.get<Plan[]>("/api/v1/plans");
+    await getPlans();
+  }, []);
+
+  const getPlans = async () => {
+    setIsLoading(true);
+    const response = await axios.get<Plan[]>(BASE_URL + "/plan/getUserPlans");
     setIsLoading(false);
     if (
       response.data &&
@@ -30,45 +39,57 @@ const GoPro = () => {
       response.data.length >= 2
     )
       setPlans(response.data);
-  }, []);
+  };
 
   const onClickCancel = async () => {
-    const res = await axios.get(BASE_URL + "/payment-cancel");
-    if (res.data === "success") {
-      dispatch(setNotifyMsg("Subscription Canceled."));
+    setSub(true);
+    const res = await axios.get(BASE_URL + "/plan/payment-cancel");
+    setSub(false);
+    if (res.data.success) {
+      dispatch(setNotifyMsg(res.data.message));
+      await getPlans();
+      dispatch(SignInWithTokenAction());
     } else dispatch(setNotifyMsg("Operation Failed."));
   };
 
   const onClickUpdate = async (plan: string) => {
-    const res = await axios.get(BASE_URL + "/payment/change/" + plan);
-    if (res.data === "success") {
-      dispatch(setNotifyMsg("Subscription Updated."));
+    setSub(true);
+    const res = await axios.get(BASE_URL + "/plan/payment/change/" + plan);
+    setSub(false);
+    if (res.data.success) {
+      dispatch(setNotifyMsg(res.data.message));
+      await getPlans();
+      dispatch(SignInWithTokenAction());
     } else dispatch(setNotifyMsg("Operation Failed."));
   };
 
   const onClickRestore = async () => {
-    const res = await axios.get(BASE_URL + "/payment-restore");
-    if (res.data === "success") {
-      dispatch(setNotifyMsg("Subscription Restored."));
+    setSub(true);
+    const res = await axios.get(BASE_URL + "/plan/payment-restore");
+    setSub(false);
+    if (res.data.success) {
+      dispatch(setNotifyMsg(res.data.message));
+      await getPlans();
+      dispatch(SignInWithTokenAction());
     } else dispatch(setNotifyMsg("Operation Failed."));
   };
 
   const renderStatus = (plan: Plan) => {
     return (
       plan["subscribed"] && (
-        <div className="absolute right-0 bg-gray-300 top-5">
+        <div className="absolute right-0 left-0 bg-gray-300 top-5">
           <div className="text-white">
-            {plan.cancelled ? (
-              <div className="bg-blue-700 px-3">Cancelled</div>
-            ) : (
-              <div className="bg-green-700 px-3">Subscribed</div>
-            )}
-            {plans[0]["ends_at"] != null && (
-              <div className="bg-blue-700 px-3">
-                {plans[0]["ended"] ? "Expired at " : "Expires at "}
-                {plans[0]["ends_at"]}
-              </div>
-            )}
+            <div className="bg-blue-700 px-3">
+              {plan.cancelled ? "Cancelled" : "Subscribed"}
+
+              {plans[0]["ends_at"] != null && (
+                <span className="text-sm">
+                  {plans[0]["ended"]
+                    ? " / Expired at "
+                    : " / Expires at " + plans[0]["ends_at"].split("T")[0]}
+                </span>
+              )}
+            </div>
           </div>
         </div>
       )
@@ -91,7 +112,6 @@ const GoPro = () => {
           return (
             <button
               onClick={onClickCancel}
-              // href={"payment-cancel"}
               className="mt-10 block w-full rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
               <i className="fa fa-times-circle"></i> Cancel
@@ -102,7 +122,6 @@ const GoPro = () => {
         return (
           <button
             onClick={onClickRestore}
-            // href={"payment-restore"}
             className="mt-10 block w-full rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
             <i className="fa fa-upload"></i> Restore
@@ -112,8 +131,7 @@ const GoPro = () => {
     } else if (plans[0].subscribed) {
       return (
         <button
-          onClick={() => onClickUpdate(plans[0].title)}
-          // href={"payment/change/pro-plan-annual"}
+          onClick={() => onClickUpdate("pro-plan-annual")}
           className="mt-10 block w-full rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
           <i className="fa fa-upload"></i> Upgrade
@@ -147,7 +165,6 @@ const GoPro = () => {
           return (
             <button
               onClick={onClickCancel}
-              // href={"payment-cancel"}
               className="mt-10 block w-full rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
               <i className="fa fa-times-circle"></i>&nbsp;Cancel
@@ -158,7 +175,6 @@ const GoPro = () => {
         return (
           <button
             onClick={onClickRestore}
-            // href={"payment-restore"}
             className="mt-10 block w-full rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
             <i className="fa fa-upload"></i>&nbsp;Restore
@@ -168,19 +184,19 @@ const GoPro = () => {
     } else if (plans[1].subscribed) {
       if (!plans[1].cancelled) {
         return (
-          <a
+          <button
+            onClick={() => onClickUpdate("pro-plan")}
             href="#"
             className="mt-10 block w-full rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
             <i className="fa fa-download"></i>&nbsp;Downgrade
-          </a>
+          </button>
         );
       } else {
         if (plans[1].ended) {
           return (
             <button
-              onClick={() => onClickUpdate(plans[1].title)}
-              // href={"payment/change/pro-plan"}
+              onClick={() => onClickUpdate("pro-plan")}
               className="mt-10 block w-full rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
               <i className="fa fa-download"></i>&nbsp;Downgrade
@@ -188,12 +204,13 @@ const GoPro = () => {
           );
         } else {
           return (
-            <a
+            <button
+              onClick={() => onClickUpdate("pro-plan")}
               href="#"
               className="mt-10 block w-full rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
               <i className="fa fa-times-circle"></i>&nbsp;Downgrade
-            </a>
+            </button>
           );
         }
       }
@@ -212,65 +229,67 @@ const GoPro = () => {
   return (
     <div className="w-full h-full px-2 py-8">
       {!isLoading ? (
-        <div className="flex flex-col md:flex-row max-w-md md:max-w-4xl mx-auto my-2 justify-center gap-4">
-          <div className="relative rounded-2xl bg-gray-50 py-10 text-center ring-1 ring-inset ring-gray-900/5 lg:flex lg:flex-col lg:justify-center lg:py-16">
-            {renderStatus(plans[0])}
-            <div className="mx-auto max-w-xs px-8">
-              <p className="text-base font-semibold text-gray-600">
-                {plans[0].title}
-              </p>
-              <p className="mt-6 flex items-baseline justify-center gap-x-2">
-                <span className="text-5xl font-bold tracking-tight text-gray-900">
-                  ${plans[0].cost}
-                </span>
-                <span className="text-sm font-semibold leading-6 tracking-wide text-gray-600">
-                  / month
-                </span>
-              </p>
-              <ul className="mt-6 text-xs leading-5 text-gray-600">
-                <li>
-                  <strong>ALL Templates (100+)</strong>
-                </li>
-                <li>Create Unlimited Graphics</li>
-                <li>PNG, JPG Download</li>
-                <li>Unlimited Saved Designs</li>
-                <li>Custom Image Upload</li>
-              </ul>
+        <div className="relative">
+          {sub && <PartialLoading />}
+          <div className="flex flex-col md:flex-row max-w-md md:max-w-4xl mx-auto my-2 justify-center gap-4">
+            <div className="relative rounded-2xl bg-gray-50 py-16 text-center ring-1 ring-inset ring-gray-900/5 lg:flex lg:flex-col lg:justify-center">
+              {renderStatus(plans[0])}
+              <div className="mx-auto max-w-xs px-8">
+                <p className="text-base font-semibold text-gray-600">
+                  {plans[0].title}
+                </p>
+                <p className="mt-6 flex items-baseline justify-center gap-x-2">
+                  <span className="text-5xl font-bold tracking-tight text-gray-900">
+                    ${plans[0].cost}
+                  </span>
+                  <span className="text-sm font-semibold leading-6 tracking-wide text-gray-600">
+                    / month
+                  </span>
+                </p>
+                <ul className="mt-6 text-xs leading-5 text-gray-600">
+                  <li>
+                    <strong>ALL Templates (100+)</strong>
+                  </li>
+                  <li>Create Unlimited Graphics</li>
+                  <li>PNG, JPG Download</li>
+                  <li>Unlimited Saved Designs</li>
+                  <li>Custom Image Upload</li>
+                </ul>
 
-              {renderMonthBtn(plans)}
+                {renderMonthBtn(plans)}
+              </div>
             </div>
-          </div>
-          <div className="rounded-2xl bg-gray-50 py-10 text-center ring-1 ring-inset ring-gray-900/5 lg:flex lg:flex-col lg:justify-center lg:py-16">
-            {renderStatus(plans[1])}
-
-            <div className="mx-auto max-w-xs px-8">
-              <p className="text-base font-semibold text-gray-600">
-                {plans[1].title} -{" "}
-                <span className="text-red-400">Save 50%</span>
-              </p>
-              <p className="mt-6 flex items-baseline justify-center gap-x-2">
-                <span className="text-5xl font-bold tracking-tight text-gray-900">
-                  ${plans[1].cost}
-                </span>
-                <span className="text-sm font-semibold leading-6 tracking-wide text-gray-600">
-                  / year
-                </span>
-              </p>
-              <ul className="mt-6 text-xs leading-5 text-gray-600">
-                <li>
-                  <strong>ALL Templates (100+)</strong>
-                </li>
-                <li>Create Unlimited Graphics</li>
-                <li>PNG, JPG Download</li>
-                <li>Unlimited Saved Designs</li>
-                <li>Custom Image Upload</li>
-              </ul>
-              {renderAnnualBtn(plans)}
+            <div className="relative rounded-2xl bg-gray-50 py-16 text-center ring-1 ring-inset ring-gray-900/5 lg:flex lg:flex-col lg:justify-center">
+              {renderStatus(plans[1])}
+              <div className="mx-auto max-w-xs px-8">
+                <p className="text-base font-semibold text-gray-600">
+                  {plans[1].title} -{" "}
+                  <span className="text-red-400">Save 50%</span>
+                </p>
+                <p className="mt-6 flex items-baseline justify-center gap-x-2">
+                  <span className="text-5xl font-bold tracking-tight text-gray-900">
+                    ${plans[1].cost}
+                  </span>
+                  <span className="text-sm font-semibold leading-6 tracking-wide text-gray-600">
+                    / year
+                  </span>
+                </p>
+                <ul className="mt-6 text-xs leading-5 text-gray-600">
+                  <li>
+                    <strong>ALL Templates (100+)</strong>
+                  </li>
+                  <li>Create Unlimited Graphics</li>
+                  <li>PNG, JPG Download</li>
+                  <li>Unlimited Saved Designs</li>
+                  <li>Custom Image Upload</li>
+                </ul>
+                {renderAnnualBtn(plans)}
+              </div>
             </div>
           </div>
         </div>
       ) : (
-        "loading..."
+        <PartialLoading />
       )}
     </div>
   );

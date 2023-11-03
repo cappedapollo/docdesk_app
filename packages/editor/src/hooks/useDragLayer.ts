@@ -59,7 +59,7 @@ export const useDragLayer = ({
         return {
             scale: state.scale,
             hoveredPage,
-            isPageLocked: state.pages.length > 0 ? state.pages[state.activePage].layers.ROOT.data.locked : false,
+            isPageLocked: state.pages.length > 0 && state.pages[state.activePage]? state.pages[state.activePage].layers.ROOT.data.locked : false,
             controlBox: state.controlBox,
             hoveredLayer: hoverLayerId ? state.pages[hoveredPage].layers[hoverLayerId] : null,
             activePage: state.activePage,

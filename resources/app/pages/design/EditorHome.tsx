@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import HeaderLayout from "../../editor/layout/HeaderLayout";
 import Sidebar from "../../editor/layout/Sidebar";
@@ -16,6 +16,8 @@ import {
 } from "@surinderlohat/react-form-validation";
 import InputField from "@/components/fields/InputField";
 import { setCurDesignName } from "@/store/reducers/design";
+import { BASE_URL } from "@/service/service";
+import { setCurDesignId } from "@/store/reducers/design";
 
 const field: IFieldObject = {
   designName: {
@@ -30,13 +32,19 @@ export default function EditorHome() {
   const [openChangeName, setOpenChangeName] = useState(false);
   const changeForm = useReactForm(field);
   const location = useLocation();
+  const {
+    state: { pageData, curDesignId: oId, curDesignName: oName },
+  } = location;
+
+  useEffect(() => {
+    dispatch(setCurDesignId(oId));
+    dispatch(setCurDesignName(oName));
+  }, []);
+
   const curDesignId = useAppSelector((state) => state.designs.curDesignId);
   const curDesignName = useAppSelector((state) => state.designs.curDesignName);
-  const dispatch = useAppDispatch();
 
-  const {
-    state: { pageData },
-  } = location;
+  const dispatch = useAppDispatch();
 
   const getFonts = useCallback((query: GetFontQuery) => {
     const buildParams = (data: Record<string, string | string[]>) => {
@@ -56,7 +64,9 @@ export default function EditorHome() {
       .get<FontData[]>(`/api/v1/fonts?${buildParams(query)}`)
       .then((res) => res.data);
   }, []);
+
   const [viewPortHeight, setViewPortHeight] = useState<number>();
+
   useEffect(() => {
     const windowHeight = () => {
       setViewPortHeight(window.innerHeight - 80);
@@ -99,6 +109,7 @@ export default function EditorHome() {
           }}
         >
           <HeaderLayout
+            curDesignName={curDesignName}
             openChangeName={() => {
               changeForm.getField("designName").setValue(curDesignName);
               setOpenChangeName(true);

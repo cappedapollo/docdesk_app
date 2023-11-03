@@ -1,17 +1,22 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import Dropdown from "@/components/dropdown";
 import { useAppSelector } from "@/store/hooks";
+import { useAppDispatch } from "@/store/hooks";
+import { SignOutAction } from "@/store/actions/auth";
 
 export default function Header() {
   const [navbar, setNavbar] = useState<boolean>(false);
   const navigate = useNavigate();
-  const handleLogout = () => {
-    localStorage.removeItem("userToken");
-    navigate("/user");
-  };
+  const { email } = useAppSelector((state) =>
+    state.auth.bSuccess ? state.auth.authUser : {}
+  );
+  const dispatch = useAppDispatch();
 
-  const email = useAppSelector((state) => state.auth.email);
+  const handleLogout = () => {
+    dispatch(SignOutAction());
+    navigate("/signin");
+  };
 
   return (
     <header>

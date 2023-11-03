@@ -8,10 +8,30 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use App\Models\TextModel; // Ensure you create a corresponding Eloquent model for texts.
 use App\Models\User;
+use App\Models\Plan;
 
 class UserController extends BaseController
 {
-    
+    public function getSubscriptionUser() {
+        $user = auth()->user();
+        $user['active'] = false;
+        $user['cancelled'] = false;
+        $user['ended'] = false;
+        $user['ends_at'] = null;
+        $user['plan'] = null;
+        $plan = null;
+        $subscriptionPlan = $user->subscription('default');
+        if ($subscriptionPlan != null) {
+            $user['active'] = $subscriptionPlan->active();
+            $user['cancelled'] = $subscriptionPlan->canceled();
+            $user['ended'] = $subscriptionPlan->ended();
+            $user['ends_at'] = $subscriptionPlan->ends_at;
+            $user['plan'] = Plan::where('stripe_plan', $subscriptionPlan->stripe_price)->first();
+        }
+        unset($user['subscriptions']);
+        return $user;
+    }
+
     public function signUp(Request $request){
         
         $validator = Validator::make($request->all(),[
@@ -77,10 +97,39 @@ class UserController extends BaseController
             $accessToken = auth()->user()->createToken('authToken')->plainTextToken;
             $responseMessage = "Login Successful";
 
+            $user = $this->getSubscriptionUser();
+
             return response()->json([
                     "success" => true,
                     "message" => $responseMessage,
-                    "data" => auth()->user(),
+                    "user" => $user,
+                    "token" => $accessToken
+                    ],200);
+        }
+        else{
+            $responseMessage = "Sorry, this user does not exist";
+            return response()->json([
+                "success" => false,
+                "message" => $responseMessage,
+                "error" => $responseMessage
+            ], 422);
+        }
+    }
+
+    public function signInWithToken(){
+
+        $user = auth()->user();
+
+        if($user){
+            
+            $accessToken = auth()->user()->createToken('authToken')->plainTextToken;
+            $responseMessage = "Login Successful";
+            $user = $this->getSubscriptionUser();
+
+            return response()->json([
+                    "success" => true,
+                    "message" => $responseMessage,
+                    "user" => $user,
                     "token" => $accessToken
                     ],200);
         }

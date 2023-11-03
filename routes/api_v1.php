@@ -24,7 +24,8 @@ use App\Http\Controllers\api\v1\DesignController;
 Route::group([
     'middleware' => ['api_authenticated']
 ], function() {
-    
+    Route::post('/auth/signinWithToken', [UserController::class, 'signInWithToken']);
+
     Route::get('/texts', [TextController::class, 'getAll']);
 
     Route::get('/fonts', [FontController::class, 'getAll']);
@@ -37,25 +38,22 @@ Route::group([
 
     Route::get('/templates/list', [TemplateController::class, 'getTemplateList']);
 
-    Route::get('/plans', [PlanController::class, 'getPlans']); // User's plans
-
-    Route::get('/getCustomer', [PlanController::class, 'getCustomer']); // Get Customer
-    
-    Route::post('/subscribe', [PlanController::class, 'subscribe']);// Subscribe the plan
-
-    Route::get('/payment/change/{plan}', [PlanController::class, 'changePlan']);
-    Route::get('/payment-cancel', [PlanController::class, 'cancel']);
-    Route::get('/payment-restore', [PlanController::class, 'storePlan']);
+    Route::prefix('plan')->group(function () {
+        Route::get('/getUserPlans', [PlanController::class, 'getUserPlans']);
+        Route::get('/getUserSubscription', [PlanController::class, 'getUserSubscription']);
+        Route::get('/getCustomer', [PlanController::class, 'getCustomer']);
+        Route::post('/subscribe', [PlanController::class, 'subscribe']);
+        Route::get('/payment/change/{plan}', [PlanController::class, 'changePlan']);
+        Route::get('/payment-cancel', [PlanController::class, 'cancel']);
+        Route::get('/payment-restore', [PlanController::class, 'restorePlan']);
+    });
 
     Route::prefix('design')->group(function () {
-
         Route::post('/save', [DesignController::class, 'saveDesign']);
         Route::post('/rename', [DesignController::class, 'renameDesign']);
         Route::post('/delete', [DesignController::class, 'deleteDesign']);
         Route::post('/duplicate', [DesignController::class, 'duplicateDesign']);
-        
         Route::get('/list', [DesignController::class, 'listDesigns']);
-        
     });
     
     
@@ -66,8 +64,6 @@ Route::group([
 Route::group([
     'middleware' => ['api_public'],
 ], function () {
-
     Route::post('/auth/signup', [UserController::class, 'signUp']);
-
     Route::post('/auth/signin', [UserController::class, 'signIn']);
 });

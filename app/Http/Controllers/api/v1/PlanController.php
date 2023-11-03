@@ -13,27 +13,20 @@ use Stripe;
 
 class PlanController extends BaseController
 {
-    public function getPlans(Request $request)
+    public function getUserPlans()
     {
         $user = Auth::user();
 		$subscriptionPlan = $user->subscription('default');
-		// echo "<pre>";
 		$cancelled = false;
 		if ($subscriptionPlan != null) {
 			$cancelled = $subscriptionPlan->canceled();
-			// print_r($subscriptionPlan);
 		}
 		
-		// echo "</pre>";
 
 		$dbplans = Plan::getPlans();
 		$plans = [];
 		
 		foreach ($dbplans as $plan) {
-			// echo "<pre>";
-			// echo $user->subscribedToPrice($plan, 'default');
-			// print_r($user->subscription($plan->name));
-			// echo "</pre>";
 
 			$ends_at = $subscriptionPlan && $subscriptionPlan->stripe_price == $plan->stripe_plan ? $subscriptionPlan->ends_at : null;
 			$cancelled = $subscriptionPlan && $subscriptionPlan->stripe_price == $plan->stripe_plan ? $subscriptionPlan->canceled() : false;
@@ -43,7 +36,6 @@ class PlanController extends BaseController
 			}
 
 			$plans[] = array(
-				// 'subscribed' => $user->subscribedToPrice($plan, 'default'),
 				'subscribed' => $user->subscribedToPrice($plan, 'default'),
 				'title' => $plan->name,
 				'stripe_plan'=>$plan->stripe_plan,
@@ -55,6 +47,34 @@ class PlanController extends BaseController
 		}
         return response()->json($plans);
     }
+
+    public function getUserSubscription(Request $request)
+	{
+		$user = auth()->user();
+
+		$user['active'] = false;
+		$user['cancelled'] = false;
+		$user['ended'] = false;
+		$user['ends_at'] = null;
+		$user['plan'] = null;
+		$plan = null;
+		$subscriptionPlan = $user->subscription('default');
+		if ($subscriptionPlan != null) {
+			$user['active'] = $subscriptionPlan->active();
+			$user['cancelled'] = $subscriptionPlan->canceled();
+			$user['ended'] = $subscriptionPlan->ended();
+			$user['ends_at'] = $subscriptionPlan->ends_at;
+
+			$user['plan'] = Plan::where('stripe_plan', $subscriptionPlan->stripe_price)->first();
+		}
+		
+		unset($user['subscriptions']);
+		
+		return response()->json([
+			'user' => $user,
+			'subscriptionPlan' => $subscriptionPlan
+		]);
+	}
 
     public function getcustomer(Request $request)
 	{
@@ -86,7 +106,10 @@ class PlanController extends BaseController
 		$plan_name = $request->plan;
 		$plan = Plan::where('slug', $plan_name)->first();
 		if(!$plan){
-			return "no-plan";
+			 return response()->json([
+                'success' => false,
+                'message' => "The plan does not exist."
+            ], 200);
 		}
 		$plan = $plan->stripe_plan;
 		$user = Auth::user();
@@ -106,17 +129,32 @@ class PlanController extends BaseController
 		// echo "</pre>";
 
 		// if($user->subscribedToPrice($plan, 'default')) {
+
 		if($user->subscribedToPrice($plan, 'default') && !$cancelled) {
-			return "failed";
+            return response()->json([
+                'success' => false,
+                'message' => "Subscription Failed."
+            ], 200);
 		}
 
-		$user->addPaymentMethod($stripeToken);
-		$user->newSubscription('default', $plan)->create($stripeToken, [
-						'email' => $user->email
-		]);
+        try {
+            $user->addPaymentMethod($stripeToken);
+            $user->newSubscription('default', $plan)->create($stripeToken, [
+                            'email' => $user->email
+            ]);
+        } catch(e) {
+            return response()->json([
+                'success' => false,
+                'message' => "Subscription Failed."
+            ], 200); 
+        }
+		
 		$user->cancelled = 0;
 		$user->save();
-		return "success";
+		return response()->json([
+            'success' => true,
+            'message' => "Successfully subscribed."
+        ], 200);
 	}
 
     public function changePlan(Request $request, $plan)
@@ -129,7 +167,10 @@ class PlanController extends BaseController
 		$user->cancelled = 0;
 		$user->cancelled_plan_name = null;
 		$user->save();
-		return "success";
+		return response()->json([
+            'success' => true,
+            'message' => "Subscription Updated."
+        ], 200);
 	}
 
     public function removecustomer(Request $request)
@@ -157,7 +198,10 @@ class PlanController extends BaseController
 		$user->cancelled_plan_name = $stripe_plan;
 		$user->cancelled = 1;
 		$user->save();
-		return "success";
+		return response()->json([
+            'success' => true,
+            'message' => "Subscription Canceled."
+        ], 200);
 	}
 
 	public function restorePlan(Request $request)
@@ -168,7 +212,10 @@ class PlanController extends BaseController
 		$user->cancelled = 0;
 		$user->cancelled_plan_name = null;
 		$user->save();
-		return "success";
+		return response()->json([
+            'success' => true,
+            'message' => "Subscription Restored."
+        ], 200);
 	}
 
 }

@@ -4,13 +4,13 @@ import type { RootState } from "../../app/store";
 // Define a type for the slice state
 interface AuthState {
   bSuccess: boolean;
-  email: string
+  authUser: any
 }
 
 // Define the initial state using that type
 const initialState: AuthState = {
   bSuccess: false,
-  email: ""
+  authUser: null
 };
 
 export const authSlice = createSlice({
@@ -20,9 +20,12 @@ export const authSlice = createSlice({
   reducers: {
     // Use the PayloadAction type to declare the contents of `action.payload`
     setResponse: (state, action: PayloadAction<any>) => {
-      state.bSuccess = action.payload && action.payload.success;
-      state.email = action.payload && action.payload.email
+      state.bSuccess = action.payload && action.payload.bSuccess;
+      state.authUser = action.payload && action.payload.authUser
     },
+    setPlanSubscription: (state, action: PayloadAction<any>) => {
+      state.authUser = {...state.authUser, subscribed: action.payload}
+    }
   },
 });
 

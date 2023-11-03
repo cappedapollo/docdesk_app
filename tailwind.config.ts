@@ -141,6 +141,7 @@ export default {
     },
     colors: () => ({
       white: "#ffffff",
+      bgOverlay: "rgba(255, 255, 255, 0.5)",
       lightPrimary: "#F4F7FE",
       blueSecondary: "#4318FF",
       brandLinear: "#868CFF",

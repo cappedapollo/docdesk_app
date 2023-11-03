@@ -48,6 +48,8 @@ const SavedGraphics = () => {
       dispatch(setCurDesignName(designList[id].name));
       navigate("/user/editor", {
         state: {
+          curDesignId: designList[id].id,
+          curDesignName: designList[id].name,
           pageData: pageData,
         },
       });

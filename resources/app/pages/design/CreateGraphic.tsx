@@ -29,6 +29,8 @@ const CreateGraphic = () => {
       dispatch(setCurDesignName(templateList[id].name));
       navigate("/user/editor", {
         state: {
+          curDesignId: -1,
+          curDesignName: templateList[id].name,
           pageData: [pageData],
         },
       });
