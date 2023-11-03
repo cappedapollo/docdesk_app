@@ -1,16 +1,17 @@
 import React from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import AdminRootLayout from "@/layouts/AdminRootLayout";
 import Error404 from "@/components/404";
+import Users from "@/pages/admin/Users";
+import Templates from "@/pages/admin/Templates";
 
 export default function AdminRoute(props) {
   return (
     <Routes>
       <Route path="/" element={<AdminRootLayout />}>
-        {/* <Route index element={<SavedGraphics />} />
-        <Route path="/create-graphic" element={<CreateGraphic />} />
-        <Route path="/go-pro" element={<GoPro />} />
-        <Route path="/payment/:plan" element={<Payment />} /> */}
+        <Route path="/" element={<Navigate to="/users" replace />} />
+        <Route path="/users" element={<Users />} />
+        <Route path="/templates" element={<Templates />} />
       </Route>
       <Route path="*" element={<Error404 />} />
     </Routes>

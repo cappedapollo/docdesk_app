@@ -1,6 +1,4 @@
-import React from "react";
 import {
-  Routes,
   Route,
   Navigate,
   createBrowserRouter,
@@ -11,7 +9,7 @@ import RouteLoading from "@/components/RouteLoading";
 import Error404 from "@/components/404";
 import PrivateRoute from "./privateRouter";
 import RequireAuth from "./guard";
-import AdminRoute from "./adminRoute";
+// import AdminRoute from "./adminRoute";
 
 const SignIn = React.lazy(() => import("@/pages/auth/SignIn"));
 const SignUp = React.lazy(() => import("@/pages/auth/SignUp"));
@@ -27,14 +25,14 @@ const router = createBrowserRouter(
           </RequireAuth>
         }
       />
-      <Route
+      {/* <Route
         path="/admin/*"
         element={
           <RequireAuth>
             <AdminRoute />
           </RequireAuth>
         }
-      />
+      /> */}
       <Route
         path="/signin"
         element={
