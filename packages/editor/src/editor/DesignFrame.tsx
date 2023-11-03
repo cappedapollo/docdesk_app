@@ -31,31 +31,33 @@ import { getPosition, isMouseEvent, isTouchEvent } from "@lidojs/utils";
 import { useUsedFont } from "../layers/hooks/useUsedFont";
 import { getWaterMarkedData } from "@/editor/data";
 import { sampleData } from "@/editor/data";
+import { useAppSelector } from "@/store/hooks";
 
 interface DesignFrameProps {
   data: SerializedPage[];
-  isProValue: boolean;
   onSavedThumbnail: (thumbnail: Blob | null) => void;
 }
-const DesignFrame: FC<DesignFrameProps> = ({
-  data,
-  subscribed,
-  isProValue,
-  onSavedThumbnail,
-}) => {
+const DesignFrame: FC<DesignFrameProps> = ({ data, onSavedThumbnail }) => {
   const shiftKeyRef = useTrackingShiftKey();
   const frameRef = useRef<HTMLDivElement>(null);
   const pageContainerRef = useRef<HTMLDivElement>(null);
   const pageRef = useRef<HTMLDivElement[]>([]);
   const contextMenuRef = useRef<HTMLDivElement>(null);
   const { usedFonts } = useUsedFont();
+
+  const subscribed = useAppSelector(
+    (state) =>
+      state.auth.authUser &&
+      state.auth.authUser.active &&
+      !state.auth.authUser.cancelled
+  );
+
   const {
     config: { assetPath },
   } = useContext(EditorContext);
   const [showPageSettings, setShowPageSettings] = useState(false);
   useShortcut(frameRef.current);
   const {
-    savedDate,
     actions,
     scale,
     pages,
@@ -69,12 +71,10 @@ const DesignFrame: FC<DesignFrameProps> = ({
     dragData,
     imageEditor,
     pageSize,
-    query,
   } = useEditor((state) => {
     const hoveredPage = parseInt(Object.keys(state.hoveredLayer)[0]);
     const hoverLayerId = state.hoveredLayer[hoveredPage];
     return {
-      isPro: state.isPro,
       savedDate: state.savedDate,
       scale: state.scale,
       pages: state.pages,
@@ -105,14 +105,8 @@ const DesignFrame: FC<DesignFrameProps> = ({
   } = useZoomPage(frameRef, pageRef, pageContainerRef);
 
   useEffect(() => {
-    // actions.setData(data);
-    // New code,
-    actions.setData(subscribed ? data : getWaterMarkedData(data));
-  }, [data, subscribed, actions]);
-
-  useEffect(() => {
-    actions.setProValue(isProValue);
-  }, [isProValue, actions]);
+    actions.setData(data);
+  }, [data, actions]);
 
   useClickOutside(
     contextMenuRef,
@@ -388,12 +382,13 @@ const DesignFrame: FC<DesignFrameProps> = ({
                   onClick={() => {
                     actions.addPage();
                     // New code.
-                    actions.setPage(
-                      activePage + 1,
-                      getWaterMarkedData(
-                        JSON.parse(JSON.stringify(sampleData))
-                      )[0]
-                    );
+                    if (!subscribed)
+                      actions.setPage(
+                        activePage + 1,
+                        getWaterMarkedData(
+                          JSON.parse(JSON.stringify(sampleData))
+                        )[0]
+                      );
                   }}
                 >
                   Add Page
@@ -440,10 +435,11 @@ const DesignFrame: FC<DesignFrameProps> = ({
           onClick={() => {
             actions.addPage();
             // New code.
-            actions.setPage(
-              activePage + 1,
-              getWaterMarkedData(JSON.parse(JSON.stringify(sampleData)))[0]
-            );
+            if (!subscribed)
+              actions.setPage(
+                activePage + 1,
+                getWaterMarkedData(JSON.parse(JSON.stringify(sampleData)))[0]
+              );
           }}
         >
           <PlusIcon />

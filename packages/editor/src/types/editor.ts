@@ -40,7 +40,6 @@ export type SidebarType =
   | "CHOOSING_COLOR";
 
 export interface EditorState {
-  isPro: boolean;
   savedDate: string;
   scale: number;
   selectedLayers: Record<number, LayerId[]>;

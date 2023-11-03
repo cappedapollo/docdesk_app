@@ -57,12 +57,14 @@ export const serializeLayers = (
     locked: layers[rootTreeId].data.locked,
     child: layers[rootTreeId].data.child,
     parent: layers[rootTreeId].data.parent,
+    waterMark: layers[rootTreeId].data.waterMark,
   };
   layers[rootTreeId].data.child.forEach((childId) => {
     res = { ...res, ...serializeLayers(layers, childId) };
   });
   return res;
 };
+
 
 export const isRootLayer = <P extends LayerComponentProps>(
   layer: Layer<RootLayerProps> | Layer<P>

@@ -52,10 +52,9 @@ export const SignUpAction = (
     dispatch(setLoading(true));
     try {
       const {
-        data: { success, message },
+        data: { message },
       } = await signUp(name, email, password, password_confirmation);
 
-      dispatch(setResponse({success, email}));
       dispatch(setNotifyMsg(message));
     } catch (e) {
       dispatch(setNotifyMsg(e.message));

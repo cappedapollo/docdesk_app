@@ -1,9 +1,10 @@
-import { useCallback } from "react";
-import { sampleData } from "../data";
+import { useCallback, useMemo } from "react";
 import { DesignFrame } from "@lidojs/editor";
 import { useEditor } from "@lidojs/editor";
 import { SaveDesignAction } from "@/store/actions/design";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
+import { getWaterMarkedData, sampleData } from "../data";
+import { setLoading } from "@/store/reducers/share";
 
 const EditorContent = (props: {
   pageData?: any;
@@ -28,25 +29,26 @@ const EditorContent = (props: {
 
   const saveThumbnail = useCallback(
     (thumbnailImg: Blob | null) => {
-      dispatch(
-        SaveDesignAction(
-          curDesignId,
-          curDesignName,
-          thumbnailImg,
-          query.serialize()
-        )
-      );
+      let q = JSON.parse(JSON.stringify(query.serialize()));
+      Object.keys(q[0].layers).forEach((id) => {
+        if (q[0].layers[id].waterMark) {
+          delete q[0].layers[id];
+          q[0].layers.ROOT.child = q[0].layers.ROOT.child.filter(
+            (k: string) => k !== id
+          );
+        }
+      });
+      dispatch(SaveDesignAction(curDesignId, curDesignName, thumbnailImg, q));
     },
     [curDesignId, curDesignName, query]
   );
 
-  return (
-    <DesignFrame
-      data={pageData || sampleData}
-      onSavedThumbnail={saveThumbnail}
-      subscribed={subscribed}
-    />
-  );
+  const data = useMemo(() => {
+    const d = pageData || sampleData;
+    return !subscribed ? getWaterMarkedData(JSON.parse(JSON.stringify(d))) : d;
+  }, [subscribed, pageData]);
+
+  return <DesignFrame data={data} onSavedThumbnail={saveThumbnail} />;
 };
 
 export default EditorContent;

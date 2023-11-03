@@ -1,12 +1,8 @@
-import React, {
-  ChangeEvent,
-  forwardRef,
-  ForwardRefRenderFunction,
-  useRef,
-} from "react";
-import PlayCircleIcon from "@duyank/icons/regular/PlayCircle";
+import React, { forwardRef, ForwardRefRenderFunction, useRef } from "react";
 import { useEditor } from "@lidojs/editor";
-import { useAppSelector, useAppDispatch } from "@/store/hooks";
+import { useAppSelector } from "@/store/hooks";
+import { useAppDispatch } from "@/store/hooks";
+import { setLoading } from "@/store/reducers/share";
 
 interface HeaderLayoutProps {
   openChangeName: () => void;
@@ -15,9 +11,11 @@ const HeaderLayout: ForwardRefRenderFunction<
   HTMLDivElement,
   HeaderLayoutProps
 > = ({ openChangeName }, ref) => {
+  const dispatch = useAppDispatch();
   const uploadRef = useRef<HTMLInputElement>(null);
   const { actions, query } = useEditor();
   const curDesignName = useAppSelector((state) => state.designs.curDesignName);
+
   const subscribed = useAppSelector(
     (state) =>
       state.auth.authUser &&
@@ -26,6 +24,7 @@ const HeaderLayout: ForwardRefRenderFunction<
   );
 
   const handleSave = () => {
+    dispatch(setLoading(true));
     const saveTime = String(Date.now());
     actions.saveDesign(saveTime);
   };
@@ -69,7 +68,7 @@ const HeaderLayout: ForwardRefRenderFunction<
         </div>
       </div>
       <div css={{ display: "flex", alignItems: "center" }}>
-        {subscribed && (
+        {
           <div
             className="px-2.5 py-2 text-white bg-blue-700 rounded-lg hover:bg-blue-800"
             css={{
@@ -85,7 +84,7 @@ const HeaderLayout: ForwardRefRenderFunction<
           >
             Save
           </div>
-        )}
+        }
       </div>
     </div>
   );

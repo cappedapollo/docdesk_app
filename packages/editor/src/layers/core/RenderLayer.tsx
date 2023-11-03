@@ -25,7 +25,6 @@ const RenderLayer: FC = () => {
     isDragging: state.dragData.status,
     isRotate: state.rotateData.status,
     pageSize: state.pageSize,
-    isPro: state.isPro,
   }));
   const handleHover = (e: React.MouseEvent) => {
     if (

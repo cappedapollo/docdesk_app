@@ -7,12 +7,10 @@ import { setCurDesignId, setCurDesignName } from "@/store/reducers/design";
 import Banner from "./Banner";
 
 const CreateGraphic = () => {
-  const bLoading = useAppSelector((state) => state.shared.bLoading);
   const navigate = useNavigate();
   const [searchValue, SetSearchValue] = useState("");
   const templateList = useAppSelector((state) => state.templates.templateList);
   const dispatch = useAppDispatch();
-  console.log("Effect");
   useEffect(() => {
     dispatch(LoadTemplateListAction());
   }, []);

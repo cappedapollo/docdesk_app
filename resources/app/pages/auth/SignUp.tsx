@@ -45,14 +45,12 @@ const field: IFieldObject = {
 const SignUp = () => {
   const form = useReactForm(field);
   const navigate = useNavigate();
-  const bLoading = useAppSelector((state) => state.shared.bLoading);
   const bSuccess = useAppSelector((state) => state.auth.bSuccess);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (bSuccess) {
-      dispatch(setResponse({ success: false }));
-      navigate("/signin");
+      navigate("/user");
     }
   }, [bSuccess]);
 

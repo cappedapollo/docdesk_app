@@ -239,38 +239,38 @@ export const waterMarkUnitData = {
   parent: "0-waterMark",
 }
 
-export const getWaterMarkedData = (pageData: any) => {
+export const getWaterMarkedData = (pageData: any[]) => {
   const d = pageData;
-  d[0].layers["ROOT"].child = [...d[0].layers["ROOT"].child, "0-waterMark"];
-  d[0].layers = { ...d[0].layers, ...waterMarkWrapperData };
-
-  let childKeys = [];
-  let childLayers = {};
-  const time = new Date().getTime();
-
-  const MAX_WIDTH = 3000;
-  const MAX_HEIGHT = 1800;
-  const rowCnt = Math.ceil(
-    MAX_WIDTH / waterMarkUnitData.props.boxSize.width
-  );
-  const colCnt = Math.ceil(
-    MAX_HEIGHT / waterMarkUnitData.props.boxSize.height
-  );
-
-  for (let i = 0; i < rowCnt; i++) {
-    for (let j = 0; j < colCnt; j++) {
-      const k = time + `row${i}col${j}`;
-      const t = JSON.parse(JSON.stringify(waterMarkUnitData));
-      t.props.position = {
-        x: t.props.boxSize.width * i,
-        y: t.props.boxSize.height * j,
-      };
-
-      childKeys.push(k);
-      childLayers = { ...childLayers, [k]: t };
+  for(let k = 0; k < d.length; k++) {
+    d[k].layers["ROOT"].child = [...d[k].layers["ROOT"].child, "0-waterMark"];
+    d[k].layers = { ...d[k].layers, ...waterMarkWrapperData };
+    let childKeys = [];
+    let childLayers = {};
+    const time = new Date().getTime();
+    const MAX_WIDTH = 3000;
+    const MAX_HEIGHT = 1800;
+    const rowCnt = Math.ceil(
+      MAX_WIDTH / waterMarkUnitData.props.boxSize.width
+    );
+    const colCnt = Math.ceil(
+      MAX_HEIGHT / waterMarkUnitData.props.boxSize.height
+    );
+  
+    for (let i = 0; i < rowCnt; i++) {
+      for (let j = 0; j < colCnt; j++) {
+        const id = time + `page${k}row${i}col${j}`;
+        const item = JSON.parse(JSON.stringify(waterMarkUnitData));
+        item.props.position = {
+          x: item.props.boxSize.width * i,
+          y: item.props.boxSize.height * j,
+        };
+  
+        childKeys.push(id);
+        childLayers = { ...childLayers, [id]: item };
+      }
     }
+    d[k].layers["0-waterMark"].child = childKeys;
+    d[k].layers = { ...d[k].layers, ...childLayers };
   }
-  d[0].layers["0-waterMark"].child = childKeys;
-  d[0].layers = { ...d[0].layers, ...childLayers };
   return d;
 }

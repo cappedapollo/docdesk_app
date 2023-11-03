@@ -80,13 +80,14 @@ export const ActionMethods = (state: EditorState, query: CoreEditorQuery) => {
     Object.entries(layerList).forEach(([layerId, layer]) => {
       state.pages[state.activePage].layers[layerId] = layer;
     });
-    state.pages[pageIndex].layers[parentId].data.child.push(layer.id);
+    // state.pages[pageIndex].layers[parentId].data.child.push(layer.id);
+    state.pages[pageIndex].layers[parentId].data.child.splice(
+      state.pages[pageIndex].layers[parentId].data.child.length - 1, 0, layer.id
+    );
     return layer;
   };
   return {
-    setProValue: (isPro: boolean) => {
-      state.isPro = isPro;
-    },
+   
     saveDesign: (savedDate: string) => {
       state.savedDate = savedDate;
     },
@@ -518,6 +519,7 @@ export const ActionMethods = (state: EditorState, query: CoreEditorQuery) => {
       const page: Page = {
         layers: {},
       };
+      
       page.layers.ROOT = {
         id: "ROOT",
         data: deserializeLayer({
@@ -747,10 +749,12 @@ export const ActionMethods = (state: EditorState, query: CoreEditorQuery) => {
       }
       const child = state.pages[pageIndex].layers.ROOT.data.child;
       ids.sort((a, b) => child.indexOf(a) - child.indexOf(b));
+      console.log(child.length)
       ids.forEach((id) => {
         const fromIndex = child.findIndex((lId) => lId === id);
         child.splice(fromIndex, 1);
-        child.splice(child.length, 0, id);
+        // child.splice(child.length - 1, 0, id);
+        child.splice(child.length - 1, 0, id);
       });
     },
     bringForward: (pageIndex: number, layerId: LayerId | LayerId[]) => {
@@ -766,7 +770,8 @@ export const ActionMethods = (state: EditorState, query: CoreEditorQuery) => {
       ids.forEach((id) => {
         const fromIndex = child.findIndex((lId) => lId === id);
         child.splice(fromIndex, 1);
-        child.splice(lastIndex + 1, 0, id);
+        // child.splice(lastIndex + 1 , 0, id);
+        child.splice(Math.min(lastIndex + 1, child.length - 1) , 0, id);
       });
     },
     sendToBack: (pageIndex: number, layerId: LayerId | LayerId[]) => {
@@ -828,7 +833,10 @@ export const ActionMethods = (state: EditorState, query: CoreEditorQuery) => {
           },
         }),
       };
-      state.pages[state.activePage].layers[parentId].data.child.push(layerId);
+      // state.pages[state.activePage].layers[parentId].data.child.push(layerId);
+      state.pages[state.activePage].layers[parentId].data.child.splice(
+        state.pages[state.activePage].layers[parentId].data.child.length - 1, 0, layerId
+      );
       this.selectLayers(state.activePage, layerId);
     },
     addShapeLayer(
@@ -871,7 +879,10 @@ export const ActionMethods = (state: EditorState, query: CoreEditorQuery) => {
           },
         }),
       };
-      state.pages[state.activePage].layers[parentId].data.child.push(layerId);
+      // state.pages[state.activePage].layers[parentId].data.child.push(layerId);
+      state.pages[state.activePage].layers[parentId].data.child.splice(
+        state.pages[state.activePage].layers[parentId].data.child.length - 1, 0, layerId
+      );
       this.selectLayers(state.activePage, layerId);
     },
     addImageLayer(
@@ -931,7 +942,10 @@ export const ActionMethods = (state: EditorState, query: CoreEditorQuery) => {
           },
         }),
       };
-      state.pages[state.activePage].layers[parentId].data.child.push(layerId);
+      // state.pages[state.activePage].layers[parentId].data.child.push(layerId);
+      state.pages[state.activePage].layers[parentId].data.child.splice(
+        state.pages[state.activePage].layers[parentId].data.child.length - 1, 0, layerId
+      );
       this.selectLayers(state.activePage, layerId);
     },
     addSvgLayer(
@@ -1048,7 +1062,10 @@ export const ActionMethods = (state: EditorState, query: CoreEditorQuery) => {
           },
         }),
       };
-      state.pages[state.activePage].layers[parentId].data.child.push(layerId);
+       // state.pages[state.activePage].layers[parentId].data.child.push(layerId);
+       state.pages[state.activePage].layers[parentId].data.child.splice(
+        state.pages[state.activePage].layers[parentId].data.child.length - 1, 0, layerId
+      );
       this.selectLayers(state.activePage, layerId);
     },
     addFrameLayer(
@@ -1096,7 +1113,10 @@ export const ActionMethods = (state: EditorState, query: CoreEditorQuery) => {
           },
         }),
       };
-      state.pages[state.activePage].layers[parentId].data.child.push(layerId);
+      // state.pages[state.activePage].layers[parentId].data.child.push(layerId);
+      state.pages[state.activePage].layers[parentId].data.child.splice(
+        state.pages[state.activePage].layers[parentId].data.child.length - 1, 0, layerId
+      );
       this.selectLayers(state.activePage, layerId);
     },
 
@@ -1156,7 +1176,10 @@ export const ActionMethods = (state: EditorState, query: CoreEditorQuery) => {
           },
         }),
       };
-      state.pages[state.activePage].layers[parentId].data.child.push(layerId);
+        // state.pages[state.activePage].layers[parentId].data.child.push(layerId);
+        state.pages[state.activePage].layers[parentId].data.child.splice(
+          state.pages[state.activePage].layers[parentId].data.child.length - 1, 0, layerId
+        );
       this.selectLayers(state.activePage, layerId);
     },
     addLayerTree({ layers, rootId }: SerializedLayerTree) {

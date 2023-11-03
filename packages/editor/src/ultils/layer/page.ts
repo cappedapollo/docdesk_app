@@ -10,3 +10,4 @@ export const serialize = (pages: Page[]): SerializedPage[] => {
         };
     });
 };
+

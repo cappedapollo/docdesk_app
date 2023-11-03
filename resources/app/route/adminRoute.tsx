@@ -9,7 +9,7 @@ export default function AdminRoute(props) {
   return (
     <Routes>
       <Route path="/" element={<AdminRootLayout />}>
-        <Route path="/" element={<Navigate to="/users" replace />} />
+        <Route path="/" element={<Navigate to="/admin/users" replace />} />
         <Route path="/users" element={<Users />} />
         <Route path="/templates" element={<Templates />} />
       </Route>

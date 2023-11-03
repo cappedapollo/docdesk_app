@@ -50,6 +50,7 @@ import { VideoLayerProps } from "../layers/VideoLayer";
 import { ImageLayerProps } from "../layers/ImageLayer";
 import { getWaterMarkedData } from "@/editor/data";
 import { sampleData } from "@/editor/data";
+import { useAppSelector } from "@/store/hooks";
 
 export interface PageProps {
   pageIndex: number;
@@ -78,6 +79,7 @@ const DesignPage: ForwardRefRenderFunction<HTMLDivElement, PageProps> = (
   const { selectedLayerIds, selectedLayers } = useSelectedLayers();
   const disabled = useDisabledFeatures();
   const {
+    query,
     actions,
     hoveredLayer,
     savedDate,
@@ -107,6 +109,14 @@ const DesignPage: ForwardRefRenderFunction<HTMLDivElement, PageProps> = (
       totalPages: state.pages.length,
     };
   });
+
+  const subscribed = useAppSelector(
+    (state) =>
+      state.auth.authUser &&
+      state.auth.authUser.active &&
+      !state.auth.authUser.cancelled
+  );
+
   const openContextMenu = (e: React.MouseEvent) => {
     e.preventDefault();
     if (hoveredLayer && hoveredLayer.data.locked) {
@@ -502,13 +512,13 @@ const DesignPage: ForwardRefRenderFunction<HTMLDivElement, PageProps> = (
               },
             }}
             onClick={() => {
-              console.log(pageIndex);
               actions.addPage(pageIndex);
               // New code.
-              actions.setPage(
-                pageIndex + 1,
-                getWaterMarkedData(JSON.parse(JSON.stringify(sampleData)))[0]
-              );
+              if (!subscribed)
+                actions.setPage(
+                  pageIndex + 1,
+                  getWaterMarkedData(JSON.parse(JSON.stringify(sampleData)))[0]
+                );
             }}
           >
             <FilePlusIcon />
