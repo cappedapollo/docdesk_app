@@ -17,10 +17,10 @@ import VideoIcon from "@duyank/icons/regular/Video";
 import VideoContent from "./sidebar/VideoContent";
 
 const tabs = [
-  // {
-  //     name: 'Template',
-  //     icon: <LayoutIcon />,
-  // },
+  {
+    name: "Template",
+    icon: <LayoutIcon />,
+  },
   {
     name: "Text",
     icon: <TextTIcon />,
@@ -33,14 +33,14 @@ const tabs = [
     name: "Frame",
     icon: <FrameCornersIcon />,
   },
-  // {
-  //     name: 'Image',
-  //     icon: <ImageIcon />,
-  // },
-  // {
-  //     name: 'Video',
-  //     icon: <VideoIcon />,
-  // },
+  {
+    name: "Image",
+    icon: <ImageIcon />,
+  },
+  {
+    name: "Video",
+    icon: <VideoIcon />,
+  },
   {
     name: "Upload",
     icon: <UploadIcon />,

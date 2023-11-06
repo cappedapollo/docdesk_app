@@ -86,7 +86,7 @@ const TextEditor = () => {
         }}
         onMouseDown={(e) => e.stopPropagation()}
       >
-        {/* {editor && <EditorContent editor={editor} />} */}
+        {editor && <EditorContent editor={editor} />}
       </div>
     </div>
   );

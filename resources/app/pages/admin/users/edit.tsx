@@ -85,6 +85,7 @@ const UserEdit = () => {
               <label className="block">Renewable Date</label>
               <input
                 className="border focus:outline-none p-2 w-full"
+                onChange={() => {}}
                 disabled
               />
             </div>
@@ -92,6 +93,7 @@ const UserEdit = () => {
               <label className="block">User Joined</label>
               <input
                 value={userData && userData.createdAt}
+                onChange={() => {}}
                 className="border focus:outline-none p-2 w-full"
                 disabled
               />
@@ -100,6 +102,7 @@ const UserEdit = () => {
               <label className="block">Selected Plan</label>
               <input
                 value={userData && userData.plan && userData.plan.name}
+                onChange={() => {}}
                 className="border focus:outline-none p-2 w-full"
                 disabled
               />
@@ -112,6 +115,7 @@ const UserEdit = () => {
                   userData.lastLogin &&
                   userData.lastLogin.created_at
                 }
+                onChange={() => {}}
                 className="border focus:outline-none p-2 w-full"
                 disabled
               />

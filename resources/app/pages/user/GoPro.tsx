@@ -270,7 +270,7 @@ const GoPro = () => {
                     / year
                   </span>
                 </p>
-                <ul className="mt-6 text-xs leading-5 text-gray-600 text-[1em]">
+                <ul className="mt-6 leading-5 text-gray-600 text-[1em]">
                   <li>ALL Templates (100+)</li>
                   <li>Create Unlimited Graphics</li>
                   <li>PNG, JPG Download</li>
