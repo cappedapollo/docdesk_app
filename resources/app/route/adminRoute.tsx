@@ -2,8 +2,9 @@ import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import AdminRootLayout from "@/layouts/AdminRootLayout";
 import Error404 from "@/components/404";
-import Users from "@/pages/admin/Users";
-import Templates from "@/pages/admin/Templates";
+import Users from "@/pages/admin/users/list";
+import Templates from "@/pages/admin/templates/list";
+import UserEdit from "@/pages/admin/users/edit";
 
 export default function AdminRoute(props) {
   return (
@@ -11,19 +12,10 @@ export default function AdminRoute(props) {
       <Route path="/" element={<AdminRootLayout />}>
         <Route path="/" element={<Navigate to="/admin/users" replace />} />
         <Route path="/users" element={<Users />} />
+        <Route path="/users/edit/:id" element={<UserEdit />} />
         <Route path="/templates" element={<Templates />} />
       </Route>
       <Route path="*" element={<Error404 />} />
     </Routes>
-
-    // <div>
-    //   {/*<Header/>*/}
-    //    <Switch>
-    //       <Route exact path={`${props.match.path}/view-profile`} component={Profile}/>
-    //       <Route exact path={props.match.path} render={props=> (
-    //         <Redirect to={{ pathname: `${props.match.path}/view-profile` }} />
-    //       )} />
-    //    </Switch>
-    // </div>
   );
 }

@@ -8,6 +8,7 @@ const DesignCard = (props: {
   size: string;
   designId: number;
   extra?: string;
+  hideContextMenu?: boolean;
   onClick: (id: number) => void;
   onDelete: (id: number) => void;
   onRename: (id: number) => void;
@@ -19,6 +20,7 @@ const DesignCard = (props: {
     size,
     image,
     extra,
+    hideContextMenu,
     onClick,
     onDelete,
     onRename,
@@ -51,11 +53,13 @@ const DesignCard = (props: {
             </p>
           </div>
           <div className="flex flex-row-reverse md:mt-2 lg:mt-0">
-            <CardMenu
-              onDelete={() => onDelete(designId)}
-              onRename={() => onRename(designId)}
-              onDuplicate={() => onDuplicate(designId)}
-            />
+            {!hideContextMenu && (
+              <CardMenu
+                onDelete={() => onDelete(designId)}
+                onRename={() => onRename(designId)}
+                onDuplicate={() => onDuplicate(designId)}
+              />
+            )}
           </div>
         </div>
       </div>

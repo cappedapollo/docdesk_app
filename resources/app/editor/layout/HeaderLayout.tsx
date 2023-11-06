@@ -16,13 +16,6 @@ const HeaderLayout: ForwardRefRenderFunction<
   const { actions, query } = useEditor();
   const curDesignName = useAppSelector((state) => state.designs.curDesignName);
 
-  const subscribed = useAppSelector(
-    (state) =>
-      state.auth.authUser &&
-      state.auth.authUser.active &&
-      !state.auth.authUser.ended
-  );
-
   const handleSave = () => {
     dispatch(setLoading(true));
     const saveTime = String(Date.now());

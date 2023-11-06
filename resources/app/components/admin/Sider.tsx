@@ -20,9 +20,13 @@ export default function Sider({ collapsed }) {
         collapsed ? "-ml-64" : "ml-0"
       } w-64 border-r h-screen transition-all`}
     >
-      <a href="">
-        <img src={"/assets/logo.png"} css={{ maxHeight: "100%" }} />
-      </a>
+      <Link to="/">
+        <img
+          src={"/assets/logo.png"}
+          css={{ maxHeight: "100%" }}
+          className="p-2"
+        />
+      </Link>
       <nav>
         <ul className="">
           {menuList.map((item) => {

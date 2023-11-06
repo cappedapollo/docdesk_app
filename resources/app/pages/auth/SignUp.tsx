@@ -8,7 +8,6 @@ import Card from "@/components/card";
 import { useNavigate, Link } from "react-router-dom";
 import { SignUpAction } from "@/store/actions/auth";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
-import { setResponse } from "@/store/reducers/auth";
 
 const field: IFieldObject = {
   email: {
@@ -60,10 +59,11 @@ const SignUp = () => {
     if (!form.hasError) {
       dispatch(
         SignUpAction(
-          "temp",
+          "DesignUser",
           fields.email,
           fields.password,
-          fields.confirmPassword
+          fields.confirmPassword,
+          navigate
         )
       );
     }

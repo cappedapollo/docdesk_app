@@ -14,7 +14,7 @@ export default function UserPrivateRoute(props) {
   return (
     <Routes>
       <Route path="/" element={<UserRootLayout />}>
-      <Route
+        <Route
           path="/editor"
           element={
             <React.Suspense fallback={<RouteLoading />}>
@@ -22,8 +22,9 @@ export default function UserPrivateRoute(props) {
             </React.Suspense>
           }
         />
-        <Route index element={<SavedGraphics />} />
+        <Route index element={<CreateGraphic />} />
         <Route path="/create-graphic" element={<CreateGraphic />} />
+        <Route path="/saved-graphics" element={<SavedGraphics />} />
         <Route path="/go-pro" element={<GoPro />} />
         <Route path="/payment/:plan" element={<Payment />} />
       </Route>

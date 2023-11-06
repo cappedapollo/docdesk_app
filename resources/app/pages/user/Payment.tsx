@@ -46,7 +46,7 @@ const options = {
 
 const CardSetupForm = ({ plan, ...props }) => {
   const navigate = useNavigate();
-  const { name } = useAppSelector((state) =>
+  const { email } = useAppSelector((state) =>
     state.auth.bSuccess ? state.auth.authUser : {}
   );
   const stripe = useStripe();
@@ -57,8 +57,8 @@ const CardSetupForm = ({ plan, ...props }) => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    setCardHolderName(name);
-  }, [name]);
+    setCardHolderName(email);
+  }, [email]);
 
   const handleCardSetup = async (event: any) => {
     event.preventDefault();
@@ -83,7 +83,7 @@ const CardSetupForm = ({ plan, ...props }) => {
         payment_method: {
           card: elements.getElement(CardElement),
           billing_details: {
-            name: cardHolderName === "" ? name : cardHolderName,
+            name: cardHolderName === "" ? email : cardHolderName,
           },
         },
       })
@@ -188,10 +188,8 @@ const Payment = () => {
                   / month
                 </span>
               </p>
-              <ul className="mt-6 text-xs leading-5 text-gray-600">
-                <li>
-                  <strong>ALL Templates (100+)</strong>
-                </li>
+              <ul className="mt-6 text-xs leading-5 text-gray-600 text-[1em]">
+                <li>ALL Templates (100+)</li>
                 <li>Create Unlimited Graphics</li>
                 <li>PNG, JPG Download</li>
                 <li>Unlimited Saved Designs</li>
@@ -214,10 +212,8 @@ const Payment = () => {
                   / year
                 </span>
               </p>
-              <ul className="mt-6 text-xs leading-5 text-gray-600">
-                <li>
-                  <strong>ALL Templates (100+)</strong>
-                </li>
+              <ul className="mt-6 text-xs leading-5 text-gray-600 text-[1em]">
+                <li>ALL Templates (100+)</li>
                 <li>Create Unlimited Graphics</li>
                 <li>PNG, JPG Download</li>
                 <li>Unlimited Saved Designs</li>

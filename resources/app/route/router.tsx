@@ -11,6 +11,7 @@ import RouteLoading from "@/components/RouteLoading";
 import Error404 from "@/components/404";
 import PrivateRoute from "./privateRouter";
 import RequireAuth from "./guard";
+import AdminRoute from "./adminRoute";
 // import AdminRoute from "./adminRoute";
 
 const SignIn = React.lazy(() => import("@/pages/auth/SignIn"));
@@ -27,14 +28,16 @@ const router = createBrowserRouter(
           </RequireAuth>
         }
       />
-      {/* <Route
+      <Route
         path="/admin/*"
         element={
           <RequireAuth>
-            <AdminRoute />
+            <React.Suspense fallback={<RouteLoading />}>
+              <AdminRoute />
+            </React.Suspense>
           </RequireAuth>
         }
-      /> */}
+      />
       <Route
         path="/signin"
         element={

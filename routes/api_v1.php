@@ -9,6 +9,8 @@ use App\Http\Controllers\api\v1\TemplateController;
 use App\Http\Controllers\api\v1\UserController;
 use App\Http\Controllers\api\v1\DesignController;
 
+use App\Http\Controllers\api\v1\admin\UserController as AdminUserController;
+
 /*
 |--------------------------------------------------------------------------
 | API v1 Routes
@@ -56,7 +58,10 @@ Route::group([
         Route::get('/list', [DesignController::class, 'listDesigns']);
     });
     
-    
+    Route::prefix('admin')->group(function () {
+        Route::get('/users', [AdminUserController::class, 'getUsers']);
+        Route::get('/users/{id}', [AdminUserController::class, 'getUser']);
+    });
 
 });
 

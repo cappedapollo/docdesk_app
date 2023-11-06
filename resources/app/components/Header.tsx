@@ -18,6 +18,13 @@ export default function Header() {
     navigate("/signin");
   };
 
+  const subscribed = useAppSelector(
+    (state) =>
+      state.auth.authUser &&
+      state.auth.authUser.active &&
+      !state.auth.authUser.ended
+  );
+
   return (
     <header>
       <nav className="sticky top-4 w-full bg-white shadow z-[9999]">
@@ -84,7 +91,7 @@ export default function Header() {
                   </li>
                   <li>
                     <Link
-                      to="/user"
+                      to="/user/saved-graphics"
                       className="sm:text-xl sm:py-4 md:text-lg  text-gray-600 hover:text-blue-600"
                     >
                       Saved Graphics
@@ -93,14 +100,16 @@ export default function Header() {
                 </div>
 
                 <div className="sm:mt-2 sm:ml-2 md:flex md:justify-end w-full md:items-center">
-                  <li>
-                    <Link
-                      to="/user/go-pro"
-                      className="sm:text-xl sm:py-2 md:text-lg md:w-[100px] px-8 py-2 mr-8 text-white bg-blue-700 rounded-lg hover:bg-blue-800"
-                    >
-                      Go Pro
-                    </Link>
-                  </li>
+                  {!subscribed && (
+                    <li>
+                      <Link
+                        to="/user/go-pro"
+                        className="sm:text-xl sm:py-2 md:text-lg md:w-[100px] px-8 py-2 mr-8 text-white bg-blue-700 rounded-lg hover:bg-blue-800"
+                      >
+                        Go Pro
+                      </Link>
+                    </li>
+                  )}
                   <li>
                     <Dropdown
                       button={
@@ -114,18 +123,18 @@ export default function Header() {
                             <div className="flex items-center gap-2">
                               <p className="text-sm font-bold text-navy-700 dark:text-white">
                                 {email}
-                              </p>{" "}
+                              </p>
                             </div>
                           </div>
                           <div className="mt-3 h-px w-full bg-gray-200 dark:bg-white/20 " />
 
                           <div className="mt-3 ml-4 flex flex-col">
-                            <a
-                              href=" "
+                            <Link
+                              to="/user/go-pro"
                               className="text-sm text-gray-800 dark:text-white hover:dark:text-white"
                             >
                               Profile Settings
-                            </a>
+                            </Link>
                             <button
                               onClick={handleLogout}
                               className="mt-3 text-left text-sm font-medium text-red-500 hover:text-red-500"

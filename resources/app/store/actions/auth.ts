@@ -46,16 +46,18 @@ export const SignUpAction = (
   name: string,
   email: string,
   password: string,
-  password_confirmation: string
+  password_confirmation: string,
+  navigate: any
 ) => {
   return async (dispatch) => {
     dispatch(setLoading(true));
     try {
       const {
-        data: { message },
+        data: { message, success },
       } = await signUp(name, email, password, password_confirmation);
 
       dispatch(setNotifyMsg(message));
+      if(success) navigate("/signin")
     } catch (e) {
       dispatch(setNotifyMsg(e.message));
     }

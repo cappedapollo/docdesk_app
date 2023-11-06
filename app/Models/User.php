@@ -46,8 +46,31 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+    public function toArray()
+    {
+        $plan = null;
+        if($this->subscription('default') != null) {
+            $plan = Plan::where("stripe_plan", $this->subscription('default')->stripe_price)->first();
+        }
+        // Customize the JSON response attributes here
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'email' => $this->email,
+            'active' => $this->active,
+            "cancelled" => $this->cancelled,
+            'ended' => $this->ended,
+            'ends_at' => $this->ends_at,
+            "plan" => $plan,
+            'designs' => $this->designs,
+            'lastLogin' => $this->tokens->last(),
+            'createdAt' => $this->created_at
+        ];
+    }
+
     public function designs(): HasMany
     {
         return $this->hasMany(Design::class);
     }
 }
+
