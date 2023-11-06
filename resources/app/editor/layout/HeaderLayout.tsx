@@ -20,7 +20,7 @@ const HeaderLayout: ForwardRefRenderFunction<
     (state) =>
       state.auth.authUser &&
       state.auth.authUser.active &&
-      !state.auth.authUser.cancelled
+      !state.auth.authUser.ended
   );
 
   const handleSave = () => {

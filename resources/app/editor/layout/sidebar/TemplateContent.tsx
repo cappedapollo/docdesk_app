@@ -18,7 +18,7 @@ const TemplateContent: FC<{ onClose: () => void }> = ({ onClose }) => {
     (state) =>
       state.auth.authUser &&
       state.auth.authUser.active &&
-      !state.auth.authUser.cancelled
+      !state.auth.authUser.ended
   );
 
   const { actions, activePage } = useEditor((state) => ({

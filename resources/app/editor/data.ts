@@ -208,10 +208,10 @@ export const waterMarkWrapperData =  {
 export const waterMarkUnitData = {
   type: { resolvedName: "TextLayer" },
   props: {
-    text: '<p style="font-family: Chewy; color: rgba(0, 0, 0, 0.2); font-size: 42px; text-align: center; line-height: 1.4; letter-spacing: 0em;"><strong>docdesk</strong></p>',
+    text: '<p style="font-family: Chewy; color: rgba(0, 0, 0, 0.2); font-size: 42px; text-align: center; line-height: 1.4; letter-spacing: 0em;"><strong>GO PRO to remove watermark</strong></p>',
     position: { x: 0, y: 0 },
     boxSize: {
-      width: 150,
+      width: 405,
       height: 80,
       x: 0,
       y: 0,

@@ -6,7 +6,7 @@ import {
   useElements,
 } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "@/service/service";
 import { BASE_URL } from "@/service/service";
 import { useAppDispatch } from "@/store/hooks";
@@ -14,6 +14,7 @@ import { setNotifyMsg } from "@/store/reducers/share";
 import CardholderIcon from "@duyank/icons/regular/Cardholder";
 import PartialLoading from "@/components/PartialLoading";
 import { SignInWithTokenAction } from "@/store/actions/auth";
+import { useAppSelector } from "@/store/hooks";
 
 const stripePromise = loadStripe(
   "pk_test_51NywJ7B6zGBDQPnqttClPsJSn3ot2BfqW8NIY5sgyChLFH1vAVh3JeTuu5CTct7cCIxoMjUtf45PSBqS0OejneWG00OQJa4uVq"
@@ -45,13 +46,19 @@ const options = {
 
 const CardSetupForm = ({ plan, ...props }) => {
   const navigate = useNavigate();
-
+  const { name } = useAppSelector((state) =>
+    state.auth.bSuccess ? state.auth.authUser : {}
+  );
   const stripe = useStripe();
   const elements = useElements();
   const [cardErr, setCardErr] = useState("");
   const [loading, setLoading] = useState(false);
-  const [carHolderName, setCardHolderName] = useState("");
+  const [cardHolderName, setCardHolderName] = useState("");
   const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    setCardHolderName(name);
+  }, [name]);
 
   const handleCardSetup = async (event: any) => {
     event.preventDefault();
@@ -76,7 +83,7 @@ const CardSetupForm = ({ plan, ...props }) => {
         payment_method: {
           card: elements.getElement(CardElement),
           billing_details: {
-            name: carHolderName,
+            name: cardHolderName === "" ? name : cardHolderName,
           },
         },
       })
@@ -126,8 +133,10 @@ const CardSetupForm = ({ plan, ...props }) => {
           <div className="mb-2 relative flex items-center">
             <CardholderIcon className="absolute ml-2 text-xl text-gray-600" />
             <input
+              required
               placeholder="Cardholder Name"
               className="w-full border border-gray rounded-md p-2 focus:outline-none pl-9"
+              value={cardHolderName}
               onChange={(e: ChangeEvent<HTMLInputElement>) =>
                 setCardHolderName(e.target.value)
               }
