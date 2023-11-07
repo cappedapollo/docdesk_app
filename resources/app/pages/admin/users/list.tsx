@@ -6,6 +6,8 @@ import { useAsync } from "react-use";
 import PartialLoading from "@/components/PartialLoading";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
+import { useAppDispatch } from "@/store/hooks";
+import { SpoofingAction } from "@/store/actions/auth";
 
 const inintalPaginationSettting = {
   current: 1,
@@ -19,6 +21,7 @@ interface PaginationDataProp {
 
 const Users = () => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const [loading, setLoading] = useState<Boolean>(false);
   const [paginatedData, setPaginatedData] = useState<PaginationDataProp>({
     data: [],
@@ -38,6 +41,10 @@ const Users = () => {
 
   const onSearch = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchText(e.target.value);
+  };
+
+  const handleSpoofing = (email: string) => {
+    dispatch(SpoofingAction(email, navigate));
   };
 
   useAsync(async () => {
@@ -101,7 +108,10 @@ const Users = () => {
                 </td>
                 <td className="p-2">{item.plan && item.plan.name}</td>
                 <td className="p-2">
-                  <button className="bg-teal-600 text-white py-1 px-4 hover:bg-teal-800">
+                  <button
+                    className="bg-teal-600 text-white py-1 px-4 hover:bg-teal-800"
+                    onClick={() => handleSpoofing(item.email)}
+                  >
                     Login
                   </button>
                 </td>

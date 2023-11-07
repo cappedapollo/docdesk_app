@@ -78,12 +78,14 @@ const CardSetupForm = ({ plan, ...props }) => {
 
     const data = res.data;
 
+    if (cardHolderName === "") return;
+
     stripe
       .confirmCardSetup(data, {
         payment_method: {
           card: elements.getElement(CardElement),
           billing_details: {
-            name: cardHolderName === "" ? email : cardHolderName,
+            name: `${cardHolderName}(${email})`,
           },
         },
       })
@@ -136,7 +138,6 @@ const CardSetupForm = ({ plan, ...props }) => {
               required
               placeholder="Cardholder Name"
               className="w-full border border-gray rounded-md p-2 focus:outline-none pl-9"
-              value={cardHolderName}
               onChange={(e: ChangeEvent<HTMLInputElement>) =>
                 setCardHolderName(e.target.value)
               }
@@ -160,7 +161,7 @@ const CardSetupForm = ({ plan, ...props }) => {
             type="submit"
             className="mt-10 float-right block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
-            Pay Now
+            {loading ? "Processing..." : "Pay Now"}
           </button>
         </form>
       </div>

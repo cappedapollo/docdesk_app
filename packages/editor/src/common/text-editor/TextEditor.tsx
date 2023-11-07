@@ -72,16 +72,20 @@ const TextEditor = () => {
               ...getTextEffectStyle(
                 effect?.name || "none",
                 effect?.settings as EffectSettings,
-                colors[0],
-                fontSizes[0]
+                // colors[0],
+                // fontSizes[0]
+                colors && colors.length > 0 ? colors[0] : "",
+                fontSizes && fontSizes.length > 0 ? fontSizes[0] : 12
               ),
             },
           },
           ...getTextEffectStyle(
             effect?.name || "none",
             effect?.settings as EffectSettings,
-            colors[0],
-            fontSizes[0]
+            // colors[0],
+            // fontSizes[0]
+            colors && colors.length > 0 ? colors[0] : "",
+            fontSizes && fontSizes.length > 0 ? fontSizes[0] : 12
           ),
         }}
         onMouseDown={(e) => e.stopPropagation()}

@@ -11,7 +11,7 @@ export default function RequireAuth({ children }: { children: JSX.Element }) {
 
   useAsync(async () => {
     if (localStorage.getItem("userToken")) {
-      const res = await signInWithToken();
+      const res = await signInWithToken(localStorage.getItem("userToken"));
       if (res.data.success) {
         dispatch(setResponse({ bSuccess: true, authUser: res.data.user }));
       } else {

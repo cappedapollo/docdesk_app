@@ -3,6 +3,7 @@ import { useEditor, useLayer, useSelectedLayers } from "../hooks";
 import { createEditor } from "../common/text-editor/core/helper/createEditor";
 import { TextContent, TextContentProps } from "@lidojs/core";
 import { LayerComponent } from "@lidojs/editor";
+import { relative } from "path";
 
 export type TextLayerProps = TextContentProps;
 
@@ -27,10 +28,14 @@ const TextLayer: LayerComponent<TextLayerProps> = ({
     editor && actions.setTextEditor(editor);
   }, []);
   const handleStartUpdate = useCallback(() => {
-    if (selectedLayerIds.includes(id)) {
-      actions.openTextEditor();
-    }
-  }, [editorActions, selectedLayerIds]);
+    console.log(selectedLayerIds, id);
+    if (selectedLayerIds.length == 0) return;
+    if (selectedLayerIds[0].indexOf("ROOT") >= 0) return;
+
+    // if (selectedLayerIds.includes(id)) {
+    actions.openTextEditor(selectedLayerIds[0]);
+    // }
+  }, [actions, selectedLayerIds]);
 
   const isEditing = useMemo(() => {
     if (!textEditor) return false;
@@ -48,7 +53,9 @@ const TextLayer: LayerComponent<TextLayerProps> = ({
         transform: `scale(${scale})`,
         opacity: isEditing ? 0 : 1,
       }}
-      onDoubleClick={handleStartUpdate}
+      onDoubleClick={() => {
+        handleStartUpdate();
+      }}
     >
       <TextContent
         text={text}

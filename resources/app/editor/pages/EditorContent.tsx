@@ -4,7 +4,6 @@ import { useEditor } from "@lidojs/editor";
 import { SaveDesignAction } from "@/store/actions/design";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { getWaterMarkedData, sampleData } from "../data";
-import { setLoading } from "@/store/reducers/share";
 
 const EditorContent = (props: {
   pageData?: any;

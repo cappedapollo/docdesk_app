@@ -36,7 +36,7 @@ export type LayerActions = {
   select: () => void;
   hover: (v?: null) => void;
   setTextEditor: (editor: TextEditor) => void;
-  openTextEditor: () => void;
+  openTextEditor: (iid: string) => void;
   openImageEditor: (data: {
     position: Delta;
     rotate: number;

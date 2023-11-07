@@ -6,6 +6,8 @@ import { useAsync } from "react-use";
 import PartialLoading from "@/components/PartialLoading";
 import { useNavigate, useParams } from "react-router-dom";
 import TemplateCard from "@/components/card/TemplateCard";
+import { useAppDispatch } from "@/store/hooks";
+import { SpoofingAction } from "@/store/actions/auth";
 
 const inintalPaginationSettting = {
   current: 1,
@@ -20,6 +22,8 @@ const UserEdit = () => {
   const [paginationSetting, setPaginationSetting] = useState(
     inintalPaginationSettting
   );
+
+  const dispatch = useAppDispatch();
 
   const userDesigns = useMemo(() => {
     if (userData) {
@@ -63,6 +67,10 @@ const UserEdit = () => {
     setUserData(res.data);
   }, [id]);
 
+  const handleSpoofing = (email: string) => {
+    dispatch(SpoofingAction(email, navigate));
+  };
+
   return (
     <div className="w-full p-4 relative">
       {loading && <PartialLoading />}
@@ -74,7 +82,10 @@ const UserEdit = () => {
             <span>{userData && userData.email}</span>
           </div>
           <div>
-            <button className="bg-teal-600 text-white py-1 px-4 hover:bg-teal-800">
+            <button
+              className="bg-teal-600 text-white py-1 px-4 hover:bg-teal-800"
+              onClick={() => userData && handleSpoofing(userData.email)}
+            >
               Login
             </button>
           </div>
@@ -83,42 +94,27 @@ const UserEdit = () => {
           <div className="grid grid-cols-2 grid-flow-row gap-4">
             <div>
               <label className="block">Renewable Date</label>
-              <input
-                className="border focus:outline-none p-2 w-full"
-                onChange={() => {}}
-                disabled
-              />
+              <div className="border focus:outline-none p-2 w-full h-10"></div>
             </div>
             <div>
               <label className="block">User Joined</label>
-              <input
-                value={userData && userData.createdAt}
-                onChange={() => {}}
-                className="border focus:outline-none p-2 w-full"
-                disabled
-              />
+              <div className="border focus:outline-none p-2 w-full h-10">
+                {userData && userData.createdAt}
+              </div>
             </div>
             <div>
               <label className="block">Selected Plan</label>
-              <input
-                value={userData && userData.plan && userData.plan.name}
-                onChange={() => {}}
-                className="border focus:outline-none p-2 w-full"
-                disabled
-              />
+              <div className="border focus:outline-none p-2 w-full h-10">
+                {userData && userData.plan && userData.plan.name}
+              </div>
             </div>
             <div>
               <label className="block">Last Login</label>
-              <input
-                value={
-                  userData &&
+              <div className="border focus:outline-none p-2 w-full h-10">
+                {userData &&
                   userData.lastLogin &&
-                  userData.lastLogin.created_at
-                }
-                onChange={() => {}}
-                className="border focus:outline-none p-2 w-full"
-                disabled
-              />
+                  userData.lastLogin.created_at}
+              </div>
             </div>
             <div>
               {userData &&
@@ -130,11 +126,7 @@ const UserEdit = () => {
                   </button>
                 )}
             </div>
-            <div>
-              <button className="text-teal-600 hover:teext-teal-800">
-                Reset Password
-              </button>
-            </div>
+            <div></div>
           </div>
         </div>
       </div>

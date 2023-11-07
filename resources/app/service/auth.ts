@@ -14,6 +14,12 @@ export const signIn = async (email: string, password: string) => {
   });
 };
 
+export const spoofing = async (email: string) => {
+  return await axios.post(BASE_URL + "/admin/users/spoofing", {
+    email,
+  });
+};
+
 export const signUp = async (
   name: string,
   email: string,

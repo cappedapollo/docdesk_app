@@ -61,6 +61,7 @@ Route::group([
     Route::prefix('admin')->group(function () {
         Route::get('/users', [AdminUserController::class, 'getUsers']);
         Route::get('/users/{id}', [AdminUserController::class, 'getUser']);
+        Route::post('/users/spoofing', [AdminUserController::class, 'spoofing']);
     });
 
 });

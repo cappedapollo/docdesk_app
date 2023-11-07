@@ -47,5 +47,56 @@ class UserController extends BaseController
         unset($user['subscriptions']);
         return $user;
     }
+
+    public function spoofing(Request $request) {
+        $validator = Validator::make($request->all(),[
+            'email' => 'required|string',
+        ]);
+
+        if($validator->fails()){
+            return response()->json([
+                'success' => false,
+                'message' => $validator->messages()->toArray()
+            ], 200);
+        }
+
+        $user = User::where('email', $request->email)->first();
+
+        if($user){
+            $accessToken = $user->createToken('authToken')->plainTextToken;
+            $responseMessage = "Login Successful";
+            
+            $user['active'] = false;
+            $user['cancelled'] = false;
+            $user['ended'] = false;
+            $user['ends_at'] = null;
+            $user['plan'] = null;
+            $plan = null;
+            $subscriptionPlan = $user->subscription('default');
+            if ($subscriptionPlan != null) {
+                $user['active'] = $subscriptionPlan->active();
+                $user['cancelled'] = $subscriptionPlan->canceled();
+                $user['ended'] = $subscriptionPlan->ended();
+                $user['ends_at'] = $subscriptionPlan->ends_at;
+                $user['plan'] = Plan::where('stripe_plan', $subscriptionPlan->stripe_price)->first();
+            }
+            unset($user['subscriptions']);
+
+            return response()->json([
+                    "success" => true,
+                    "message" => $responseMessage,
+                    "user" => $user,
+                    "token" => $accessToken
+                    ],200);
+        }
+        else{
+            $responseMessage = "Sorry, this user does not exist";
+            return response()->json([
+                "success" => false,
+                "message" => $responseMessage,
+                "error" => $responseMessage
+            ], 422);
+        }
+    }
 }
 

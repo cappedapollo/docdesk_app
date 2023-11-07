@@ -1,6 +1,7 @@
 import { signIn, signUp, signInWithToken } from "@/service/auth";
 import { setLoading, setNotifyMsg } from "@/store/reducers/share";
 import { setResponse } from "@/store/reducers/auth";
+import { spoofing } from "@/service/auth";
 
 export const SignInWithTokenAction = () => {
   return async (dispatch) => {
@@ -27,6 +28,25 @@ export const SignInAction = (username: string, password: string) => {
       localStorage.setItem("userToken", token);
       dispatch(setResponse({bSuccess: success, authUser: user}));
       dispatch(setNotifyMsg(message));
+    } catch (e) {
+      dispatch(setNotifyMsg(e.message));
+    }
+    dispatch(setLoading(false));
+  };
+};
+
+export const SpoofingAction = (email: string, navigate: any) => {
+  return async (dispatch) => {
+    dispatch(setLoading(true));
+    try {
+      const {
+        data: { success, message, token, user },
+      } = await spoofing(email);
+      localStorage.setItem("userToken", token);
+      dispatch(setResponse({bSuccess: success, authUser: user}));
+      dispatch(setNotifyMsg(message));
+      if(success) navigate("/user")
+
     } catch (e) {
       dispatch(setNotifyMsg(e.message));
     }
