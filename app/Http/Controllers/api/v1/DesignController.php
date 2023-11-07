@@ -100,12 +100,26 @@ class DesignController extends BaseController
     
 
     public function listDesigns(Request $request){
-        $designs =  auth()->user()->designs()->get();
-        $responseMessage = "Loaded Designs!";
+        // $designs =  auth()->user()->designs()->get();
+        // $responseMessage = "Loaded Designs!";
+        // return response()->json([
+        //     'success'=>true, 
+        //     'message'=>$responseMessage,
+        //     'designs'=>$designs
+        // ],200);
+        $pageNum = $request->get("current", 1);
+        $pageSize = $request->get("pageSize", 10);
+        $search = $request->get("search", "");
+        $data = Design::where("user_id", auth()->user()->id);
+        if($search != "") {
+            $data = $data->where("name","like", "%$search%");
+        }
+        $total = $data->count();
+        $data = $data->skip(($pageNum - 1) * $pageSize)->limit($pageSize)->get();
         return response()->json([
-            'success'=>true, 
-            'message'=>$responseMessage,
-            'designs'=>$designs
-        ],200);
+            "success" => true,
+            "data" => $data,
+            "total" => $total
+            ],200);
     }
 }

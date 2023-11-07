@@ -59,6 +59,7 @@ class User extends Authenticatable
             'email' => $this->email,
             'active' => $this->active,
             "cancelled" => $this->cancelled,
+            "role" => $this->role,
             'ended' => $this->ended,
             'ends_at' => $this->ends_at,
             "plan" => $plan,

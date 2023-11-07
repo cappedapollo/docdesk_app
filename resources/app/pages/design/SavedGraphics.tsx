@@ -16,6 +16,10 @@ import {
   IFieldObject,
   useReactForm,
 } from "@surinderlohat/react-form-validation";
+import { useAsync } from "react-use";
+import axios, { BASE_URL } from "@/service/service";
+import Pagination from "rc-pagination";
+import PartialLoading from "@/components/PartialLoading";
 
 const field: IFieldObject = {
   designName: {
@@ -25,44 +29,85 @@ const field: IFieldObject = {
   },
 };
 
+const inintalPaginationSettting = {
+  current: 1,
+  pageSize: 10,
+};
+
+interface PaginationDataProp {
+  data: any[];
+  total: number;
+}
+
 const SavedGraphics = () => {
-  const [bOpen, setOpen] = useState(true);
-  const category = ["Sample1", "Sample2", "Sample3"];
-  const [searchValue, SetSearchValue] = useState("");
+  const [loading, setLoading] = useState<Boolean>(false);
+  const [paginatedData, setPaginatedData] = useState<PaginationDataProp>({
+    data: [],
+    total: 0,
+  });
+  const [paginationSetting, setPaginationSetting] = useState(
+    inintalPaginationSettting
+  );
+  const [searchText, setSearchText] = useState("");
+
+  const onChange = (current: number, pageSize: number) => {
+    setPaginationSetting((draft) => ({ ...draft, current, pageSize }));
+  };
+
+  const onPageSizeChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    setPaginationSetting((draft) => ({ ...draft, pageSize: e.target.value }));
+  };
+
+  const onSearch = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchText(e.target.value);
+  };
+
+  useAsync(async () => {
+    setLoading(true);
+    const res = await axios.get(BASE_URL + "/design/list", {
+      params: { ...paginationSetting, search: searchText },
+    });
+    setLoading(false);
+    setPaginatedData(res.data);
+  }, [searchText, paginationSetting]);
+
+  // const [bOpen, setOpen] = useState(true);
+  // const category = ["Sample1", "Sample2", "Sample3"];
+  // const [searchValue, SetSearchValue] = useState("");
   const [selDesignId, setSelDesignId] = useState(-1);
   const [openChangeName, setOpenChangeName] = useState(false);
   const [openDeleteConfirm, setOpenDeleteConfirm] = useState(false);
-  const designList = useAppSelector((state) => state.designs.designList);
+  // const designList = useAppSelector((state) => state.designs.designList);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const changeForm = useReactForm(field);
 
-  useEffect(() => {
-    dispatch(LoadDesignAction());
-  }, []);
+  // useEffect(() => {
+  //   dispatch(LoadDesignAction());
+  // }, []);
 
   const onTapDesign = useCallback(
     (id: number) => {
-      const pageData = JSON.parse(designList[id].data);
-      dispatch(setCurDesignId(designList[id].id));
-      dispatch(setCurDesignName(designList[id].name));
+      const pageData = JSON.parse(paginatedData.data[id].data);
+      dispatch(setCurDesignId(paginatedData.data[id].id));
+      dispatch(setCurDesignName(paginatedData.data[id].name));
       navigate("/user/editor", {
         state: {
-          curDesignId: designList[id].id,
-          curDesignName: designList[id].name,
+          curDesignId: paginatedData.data[id].id,
+          curDesignName: paginatedData.data[id].name,
           pageData: pageData,
         },
       });
     },
-    [designList]
+    [paginatedData.data]
   );
 
   const handleDelete = useCallback(
     (id: number) => {
-      setSelDesignId(designList[id].id);
+      setSelDesignId(paginatedData.data[id].id);
       setOpenDeleteConfirm(true);
     },
-    [designList]
+    [paginatedData.data]
   );
 
   const handleConfirmDelete = () => {
@@ -72,18 +117,18 @@ const SavedGraphics = () => {
 
   const handleDuplicate = useCallback(
     (id: number) => {
-      dispatch(DuplicateDesignAction(designList[id].id));
+      dispatch(DuplicateDesignAction(paginatedData.data[id].id));
     },
-    [designList]
+    [paginatedData.data]
   );
 
   const handleRename = useCallback(
     (id: number) => {
-      changeForm.getField("designName").setValue(designList[id].name);
-      setSelDesignId(designList[id].id);
+      changeForm.getField("designName").setValue(paginatedData.data[id].name);
+      setSelDesignId(paginatedData.data[id].id);
       setOpenChangeName(true);
     },
-    [designList]
+    [paginatedData.data]
   );
 
   const handleChangeDesignName = (e: ChangeEvent<HTMLInputElement>) => {
@@ -97,56 +142,57 @@ const SavedGraphics = () => {
     setOpenChangeName(false);
   };
 
-  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
-    SetSearchValue(e.target.value);
-  };
+  // const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+  //   SetSearchValue(e.target.value);
+  // };
   return (
     <div className="w-full h-full px-2">
       <Banner title="Saved Graphics" description="" />
-
+      <div className="flex justify-between items-center">
+        <div className="flex h-[40px] mb-4 mt-4 items-center rounded-full bg-lightPrimary text-navy-70">
+          <p className="pl-3 pr-2 text-xl">
+            <svg
+              stroke="currentColor"
+              fill="none"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="h-4 w-4 text-gray-400 dark:text-white"
+              height="1em"
+              width="1em"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </p>
+          <input
+            type="text"
+            placeholder="Search..."
+            className="block h-full w-64 rounded-full bg-lightPrimary text-sm font-medium text-navy-700 outline-none placeholder:!text-gray-400"
+            onChange={onSearch}
+          />
+        </div>
+        <Pagination
+          onChange={onChange}
+          pageSizeOptions={["10", "20", "50", "100"]}
+          showTotal={(total, range) =>
+            `Showing ${range[0]}-${range[1]} of ${total}`
+          }
+          total={paginatedData && paginatedData.total}
+          {...paginationSetting}
+        />
+      </div>
       <div className="h-full w-full md:col-span-10 ">
         {/* Main Content */}
+        {loading && <PartialLoading />}
+
         <main className={`mx-[12px] h-full flex-none transition-all md:pr-2`}>
-          <div className="mt-2 font-poppins text-[26px] font-bold text-navy-700 dark:text-white">
-            <div className="flex h-[40px] md:w-2/5 sm:w-full mb-4 mt-4 items-center rounded-full bg-lightPrimary text-navy-70">
-              <p className="pl-3 pr-2 text-xl">
-                <svg
-                  stroke="currentColor"
-                  fill="none"
-                  strokeWidth="2"
-                  viewBox="0 0 24 24"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="h-4 w-4 text-gray-400 dark:text-white"
-                  height="1em"
-                  width="1em"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <circle cx="11" cy="11" r="8"></circle>
-                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
-              </p>
-              <input
-                type="text"
-                placeholder="Search..."
-                value={searchValue}
-                onChange={handleSearchChange}
-                className="block h-full w-full rounded-full bg-lightPrimary text-sm font-medium text-navy-700 outline-none placeholder:!text-gray-400"
-              />
-            </div>
-          </div>
           <div className="h-full">
             <div className="z-20 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
-              {designList
-                .filter((design) => {
-                  if (searchValue == "") return true;
-                  return design.name
-                    .toLowerCase()
-                    .includes(searchValue.toLowerCase())
-                    ? true
-                    : false;
-                })
-                .map((design, index) => (
+              {paginatedData.data &&
+                paginatedData.data.map((design, index) => (
                   <DesignCard
                     image={design.thumbnail}
                     key={index}

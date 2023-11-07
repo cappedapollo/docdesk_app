@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Plan;
+use Auth;
+
 
 class UserController extends BaseController
 {
@@ -49,6 +51,7 @@ class UserController extends BaseController
     }
 
     public function spoofing(Request $request) {
+
         $validator = Validator::make($request->all(),[
             'email' => 'required|string',
         ]);
@@ -60,7 +63,11 @@ class UserController extends BaseController
             ], 200);
         }
 
+        auth()->guard('web')->logout();
+
         $user = User::where('email', $request->email)->first();
+
+        auth()->guard('web')->login($user);
 
         if($user){
             $accessToken = $user->createToken('authToken')->plainTextToken;

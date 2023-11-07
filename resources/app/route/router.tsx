@@ -12,6 +12,7 @@ import Error404 from "@/components/404";
 import PrivateRoute from "./privateRouter";
 import RequireAuth from "./guard";
 import AdminRoute from "./adminRoute";
+import ForgotPassword from "@/pages/auth/ForgotPassword";
 // import AdminRoute from "./adminRoute";
 
 const SignIn = React.lazy(() => import("@/pages/auth/SignIn"));
@@ -51,6 +52,14 @@ const router = createBrowserRouter(
         element={
           <React.Suspense fallback={<RouteLoading />}>
             <SignUp />
+          </React.Suspense>
+        }
+      />
+      <Route
+        path="/forgot-password"
+        element={
+          <React.Suspense fallback={<RouteLoading />}>
+            <ForgotPassword />
           </React.Suspense>
         }
       />

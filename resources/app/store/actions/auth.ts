@@ -8,7 +8,7 @@ export const SignInWithTokenAction = () => {
     try {
       const {
         data: { success, message, token, user },
-      } = await signInWithToken();
+      } = await signInWithToken(localStorage.getItem("userToken"));
       localStorage.setItem("userToken", token);
       dispatch(setResponse({bSuccess: success, authUser: user}));
       dispatch(setNotifyMsg(message));

@@ -1,9 +1,9 @@
 import { useCallback, useMemo } from "react";
 import { DesignFrame } from "@lidojs/editor";
 import { useEditor } from "@lidojs/editor";
-import { SaveDesignAction } from "@/store/actions/design";
-import { useAppSelector, useAppDispatch } from "@/store/hooks";
-import { getWaterMarkedData, sampleData } from "../data";
+import { useAppDispatch } from "@/store/hooks";
+import { sampleData } from "../data";
+import { SaveTemplateAction } from "@/store/actions/templates";
 
 const EditorContent = (props: {
   pageData?: any;
@@ -19,35 +19,29 @@ const EditorContent = (props: {
   // const curDesignId = useAppSelector((state) => state.designs.curDesignId);
   // const curDesignName = useAppSelector((state) => state.designs.curDesignName);
 
-  const subscribed = useAppSelector(
-    (state) =>
-      state.auth.authUser &&
-      state.auth.authUser.active &&
-      !state.auth.authUser.ended
-  );
-
   const saveThumbnail = useCallback(
     (thumbnailImg: Blob | null) => {
       let q = JSON.parse(JSON.stringify(query.serialize()));
-      for (let i = 0; i < q.length; i++) {
-        Object.keys(q[i].layers).forEach((id) => {
-          if (q[i].layers[id].waterMark) {
-            delete q[i].layers[id];
-            q[i].layers.ROOT.child = q[i].layers.ROOT.child.filter(
-              (k: string) => k !== id
-            );
-          }
-        });
-      }
-      dispatch(SaveDesignAction(curDesignId, curDesignName, thumbnailImg, q));
+
+      Object.keys(q[0].layers).forEach((id) => {
+        if (q[0].layers[id].waterMark) {
+          delete q[0].layers[id];
+          q[0].layers.ROOT.child = q[0].layers.ROOT.child.filter(
+            (k: string) => k !== id
+          );
+        }
+      });
+
+      dispatch(
+        SaveTemplateAction(curDesignId, curDesignName, thumbnailImg, q[0])
+      );
     },
     [curDesignId, curDesignName, query]
   );
 
   const data = useMemo(() => {
-    const d = pageData || sampleData;
-    return !subscribed ? getWaterMarkedData(JSON.parse(JSON.stringify(d))) : d;
-  }, [subscribed, pageData]);
+    return pageData || sampleData;
+  }, [pageData]);
 
   return <DesignFrame data={data} onSavedThumbnail={saveThumbnail} />;
 };

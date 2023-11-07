@@ -2,8 +2,8 @@ import axios from "axios";
 import authAxios from "@/service/service";
 import { BASE_URL } from "./service";
 
-export const signInWithToken = async () => {
-  return await authAxios.post(BASE_URL + "/auth/signinWithToken");
+export const signInWithToken = async (token:string) => {
+  return await authAxios.post(BASE_URL + "/auth/signinWithToken", {token});
 };
 
 
@@ -11,6 +11,13 @@ export const signIn = async (email: string, password: string) => {
   return await axios.post(BASE_URL + "/auth/signin", {
     email,
     password,
+  });
+};
+
+
+export const forgotPassword = async (email: string) => {
+  return await axios.post(BASE_URL + "/auth/forgot-password", {
+    email,
   });
 };
 

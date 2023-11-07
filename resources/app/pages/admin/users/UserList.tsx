@@ -63,7 +63,9 @@ const Users = () => {
         <Pagination
           onChange={onChange}
           pageSizeOptions={["10", "20", "50", "100"]}
-          showTotal={(_total, [from, to]) => `${from} - ${to} of ${_total} cnt`}
+          showTotal={(total, range) =>
+            `Showing ${range[0]}-${range[1]} of ${total}`
+          }
           total={paginatedData && paginatedData.total}
           {...paginationSetting}
         />

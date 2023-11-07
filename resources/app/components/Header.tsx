@@ -25,6 +25,10 @@ export default function Header() {
       !state.auth.authUser.ended
   );
 
+  const isAdmin = useAppSelector(
+    (state) => state.auth.authUser && state.auth.authUser.role === "admin"
+  );
+
   return (
     <header>
       <nav className="sticky top-4 w-full bg-white shadow z-[9999]">
@@ -100,6 +104,16 @@ export default function Header() {
                 </div>
 
                 <div className="sm:mt-2 sm:ml-2 md:flex md:justify-end w-full md:items-center">
+                  {isAdmin && (
+                    <li>
+                      <Link
+                        to="/admin"
+                        className="sm:text-xl sm:py-2 md:text-lg md:w-[100px] px-8 py-2 mr-8 text-white bg-blue-700 rounded-lg hover:bg-blue-800"
+                      >
+                        Go Admin
+                      </Link>
+                    </li>
+                  )}
                   {!subscribed && (
                     <li>
                       <Link

@@ -10,6 +10,7 @@ use App\Http\Controllers\api\v1\UserController;
 use App\Http\Controllers\api\v1\DesignController;
 
 use App\Http\Controllers\api\v1\admin\UserController as AdminUserController;
+use App\Http\Controllers\api\v1\admin\TemplateController as AdminTemplateController;
 
 /*
 |--------------------------------------------------------------------------
@@ -59,9 +60,16 @@ Route::group([
     });
     
     Route::prefix('admin')->group(function () {
-        Route::get('/users', [AdminUserController::class, 'getUsers']);
-        Route::get('/users/{id}', [AdminUserController::class, 'getUser']);
-        Route::post('/users/spoofing', [AdminUserController::class, 'spoofing']);
+        Route::prefix('users')->group(function () { 
+            Route::get('/', [AdminUserController::class, 'getUsers']);
+            Route::get('/{id}', [AdminUserController::class, 'getUser']);
+            Route::post('/spoofing', [AdminUserController::class, 'spoofing']);
+        });
+        Route::prefix('templates')->group(function () { 
+            Route::get('/', [AdminTemplateController::class, 'getTemplates']);
+            Route::post('/save', [AdminTemplateController::class, 'saveTemplate']);
+            Route::post('/delete', [AdminTemplateController::class, 'deleteTemplate']);
+        });
     });
 
 });
@@ -72,4 +80,5 @@ Route::group([
 ], function () {
     Route::post('/auth/signup', [UserController::class, 'signUp']);
     Route::post('/auth/signin', [UserController::class, 'signIn']);
+    Route::post('/auth/forgotPassword', [UserController::class, 'forgotPassword']);
 });

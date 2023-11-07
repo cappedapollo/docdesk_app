@@ -15,7 +15,6 @@ import FrameContent from "./sidebar/FrameContent";
 import { useEditor } from "@lidojs/editor";
 import VideoIcon from "@duyank/icons/regular/Video";
 import VideoContent from "./sidebar/VideoContent";
-import { useAppSelector } from "@/store/hooks";
 
 const tabs = [
   {
@@ -49,9 +48,6 @@ const tabs = [
 ];
 const Sidebar = () => {
   const { actions } = useEditor();
-  const isAdmin = useAppSelector(
-    (state) => state.auth.authUser && state.auth.authUser.role === "admin"
-  );
   const [tab, setTab] = useState<string | null>(null);
   return (
     <div
@@ -69,13 +65,7 @@ const Sidebar = () => {
         }}
       >
         <SidebarTab
-          tabs={
-            isAdmin
-              ? tabs
-              : tabs.filter(
-                  (item) => !["Template", "Video", "Image"].includes(item.name)
-                )
-          }
+          tabs={tabs}
           active={tab}
           onChange={(_, tab) => {
             actions.setSidebar();

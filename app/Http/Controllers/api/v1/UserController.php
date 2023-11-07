@@ -6,9 +6,12 @@ use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use App\Models\TextModel; // Ensure you create a corresponding Eloquent model for texts.
 use App\Models\User;
 use App\Models\Plan;
+use Illuminate\Support\Facades\DB;
+
 
 class UserController extends BaseController
 {
@@ -82,7 +85,9 @@ class UserController extends BaseController
         }
 
         $credentials = $request->only(["email","password"]);
-        $user = User::where('email',$credentials['email'])->first();
+
+        $user = User::where('email', $credentials['email'])->first();
+
         if($user){
             if(!auth()->attempt($credentials)){
                 $responseMessage = "Invalid username or password";
@@ -116,13 +121,26 @@ class UserController extends BaseController
         }
     }
 
-    public function signInWithToken(){
+    public function signInWithToken(Request $request){
 
-        $user = auth()->user();
+        $id = explode("|", $request->token)[0];
+    
+        $tokenRecord = DB::table('personal_access_tokens')->where("id", $id)->first();
+
+        if($tokenRecord == null) {
+            $responseMessage = "Sorry, can not find token";
+            return response()->json([
+                "success" => false,
+                "message" => $responseMessage,
+                "error" => $responseMessage
+            ], 422);
+        }
+
+        $user = User::where("id", $tokenRecord->tokenable_id)->first();
 
         if($user){
             
-            $accessToken = auth()->user()->createToken('authToken')->plainTextToken;
+            $accessToken = $user->createToken('authToken')->plainTextToken;
             $responseMessage = "Login Successful";
             $user = $this->getSubscriptionUser();
 
@@ -141,6 +159,10 @@ class UserController extends BaseController
                 "error" => $responseMessage
             ], 422);
         }
+    }
+    
+    public function forgotPassword(Request $request) {
+        
     }
 }
 

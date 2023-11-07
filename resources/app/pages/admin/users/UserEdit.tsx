@@ -117,14 +117,14 @@ const UserEdit = () => {
               </div>
             </div>
             <div>
-              {userData &&
+              {/* {userData &&
                 userData.active &&
                 !userData.ended &&
                 !userData.cancelled && (
                   <button className="bg-amber-600 text-white py-1 px-4 hover:bg-amber-800">
                     Cancel Subscription
                   </button>
-                )}
+                )} */}
             </div>
             <div></div>
           </div>
@@ -136,8 +136,8 @@ const UserEdit = () => {
           <Pagination
             onChange={onChange}
             pageSizeOptions={["10", "20", "50", "100"]}
-            showTotal={(_total, [from, to]) =>
-              `${from} - ${to} of ${_total} cnt`
+            showTotal={(total, range) =>
+              `Showing ${range[0]}-${range[1]} of ${total}`
             }
             total={userData && userData.designs.length}
             {...paginationSetting}
