@@ -164,15 +164,19 @@ class UserController extends BaseController
     
     public function forgotPassword(Request $request) {
         $link = base64_encode($request->email);
-        Mail::to($request->email)->send(new ForgotPasswordMail(env('APP_URL', "http://localhost:8000")."/reset-password/".$link));
-        if (Mail::failures() != 0) {
-            $responseMessage = "Failed to send.";
+        try{
+            Mail::to($request->email)->send(new ForgotPasswordMail(env('APP_URL', "http://localhost:8000")."/reset-password/".$link));
+        }
+        catch(Exception $e){
+            $responseMessage = $e->getMessage();
             return response()->json([
                 "success" => false,
                 "message" => $responseMessage,
                 "error" => $responseMessage,
             ], 200);
+
         }
+        
         $responseMessage = "Success to send.";
         return response()->json([
             "success" => true,
