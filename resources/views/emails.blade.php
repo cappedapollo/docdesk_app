@@ -1,3 +1,3 @@
 <div>
-    Password: {{ $password }}
+    To reset password, link to <a href="{{ $link }}">here</a>
 </div>

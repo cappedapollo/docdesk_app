@@ -13,12 +13,14 @@ class ForgotPasswordMail extends Mailable
 {
     use Queueable, SerializesModels;
 
+    private $link;
     /**
      * Create a new message instance.
      */
-    public function __construct(public $password)
+    public function __construct($link)
     {
         //
+        $this->link = $link;
     }
 
     /**
@@ -27,7 +29,7 @@ class ForgotPasswordMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Hi',
+            subject: env('APP_NAME', 'DesignEditor'),
         );
     }
 
@@ -39,7 +41,7 @@ class ForgotPasswordMail extends Mailable
         return new Content(
             view: 'emails',
             with: [
-                'password' => $this->password,
+                'link' => $this->link,
             ],
         );
     }

@@ -13,6 +13,8 @@ import PrivateRoute from "./privateRouter";
 import RequireAuth from "./guard";
 import AdminRoute from "./adminRoute";
 import ForgotPassword from "@/pages/auth/ForgotPassword";
+import RequireAdmin from "./adminGuard";
+import ResetPassword from "@/pages/auth/ResetPassword";
 // import AdminRoute from "./adminRoute";
 
 const SignIn = React.lazy(() => import("@/pages/auth/SignIn"));
@@ -33,9 +35,11 @@ const router = createBrowserRouter(
         path="/admin/*"
         element={
           <RequireAuth>
-            <React.Suspense fallback={<RouteLoading />}>
-              <AdminRoute />
-            </React.Suspense>
+            <RequireAdmin>
+              <React.Suspense fallback={<RouteLoading />}>
+                <AdminRoute />
+              </React.Suspense>
+            </RequireAdmin>
           </RequireAuth>
         }
       />
@@ -52,6 +56,14 @@ const router = createBrowserRouter(
         element={
           <React.Suspense fallback={<RouteLoading />}>
             <SignUp />
+          </React.Suspense>
+        }
+      />
+      <Route
+        path="/reset-password/:q"
+        element={
+          <React.Suspense fallback={<RouteLoading />}>
+            <ResetPassword />
           </React.Suspense>
         }
       />

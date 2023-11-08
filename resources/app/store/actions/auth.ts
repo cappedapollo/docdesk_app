@@ -84,3 +84,21 @@ export const SignUpAction = (
     dispatch(setLoading(false));
   };
 };
+
+export const ResetPassword = (password: string,
+  password_confirmation: string) => {
+    return async (dispatch) => {
+      dispatch(setLoading(true));
+      try {
+        const {
+          data: { message, success },
+        } = await signUp(name, email, password, password_confirmation);
+  
+        dispatch(setNotifyMsg(message));
+        if(success) navigate("/signin")
+      } catch (e) {
+        dispatch(setNotifyMsg(e.message));
+      }
+      dispatch(setLoading(false));
+    };
+}

@@ -81,4 +81,5 @@ Route::group([
     Route::post('/auth/signup', [UserController::class, 'signUp']);
     Route::post('/auth/signin', [UserController::class, 'signIn']);
     Route::post('/auth/forgotPassword', [UserController::class, 'forgotPassword']);
+    Route::post('/auth/resetPassword', [UserController::class, 'resetPassword']);
 });

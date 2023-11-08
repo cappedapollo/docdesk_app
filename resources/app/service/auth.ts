@@ -21,6 +21,14 @@ export const forgotPassword = async (email: string) => {
   });
 };
 
+export const resetPassword = async (enc: string, password: string, password_confirmation: string) => {
+  return await axios.post(BASE_URL + "/auth/resetPassword", {
+    enc,
+    password,
+    password_confirmation
+  });
+};
+
 export const spoofing = async (email: string) => {
   return await axios.post(BASE_URL + "/admin/users/spoofing", {
     email,

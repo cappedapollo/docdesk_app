@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'default' => env('MAIL_MAILER', 'mailgun'),
+    'default' => env('MAIL_MAILER', 'stmp'),
 
     /*
     |--------------------------------------------------------------------------
@@ -54,9 +54,9 @@ return [
             'transport' => 'mailgun',
             'domain' => env('MAILGUN_DOMAIN'),
             'secret' => env('MAILGUN_SECRET'),
-            // 'client' => [
-            //     'timeout' => 5,
-            // ],
+            'client' => [
+                'timeout' => 5,
+            ],
         ],
 
         'postmark' => [
@@ -106,7 +106,7 @@ return [
     ],
 
 
-    'reply_to' => ['address' => 'example@example.com', 'name' => 'App Name'],
+    // 'reply_to' => ['address' => 'example@example.com', 'name' => 'App Name'],
 
 
     /*

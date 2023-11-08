@@ -118,7 +118,7 @@ class UserController extends BaseController
                 "success" => false,
                 "message" => $responseMessage,
                 "error" => $responseMessage
-            ], 422);
+            ], 200);
         }
     }
 
@@ -134,7 +134,7 @@ class UserController extends BaseController
                 "success" => false,
                 "message" => $responseMessage,
                 "error" => $responseMessage
-            ], 422);
+            ], 200);
         }
 
         $user = User::where("id", $tokenRecord->tokenable_id)->first();
@@ -158,26 +158,53 @@ class UserController extends BaseController
                 "success" => false,
                 "message" => $responseMessage,
                 "error" => $responseMessage
-            ], 422);
+            ], 200);
         }
     }
     
     public function forgotPassword(Request $request) {
-        // Mail::to("davidhandevdev@gmail.com")->send(new ForgotPasswordMail("234"));
-        // return "";
-        # Instantiate the client.
-        $mgClient = Mailgun::create('b78f8f54d5dc69013313fcc7f1c4823d-8c9e82ec-38049def', 'https://localhost:8000');
-        $domain = "davidhandevdev@gmailc.om";
-        $params = array(
-        'from'    => 'Excited User davidhandevdev@gmailc.om',
-        'to'      => 'apollo0114@outlook.com',
-        'subject' => 'Hello',
-        'text'    => 'Testing some Mailgun awesomness!'
-        );
+        $link = base64_encode($request->email);
+        Mail::to($request->email)->send(new ForgotPasswordMail(env('APP_URL', "http://localhost:8000")."/reset-password/".$link));
+        if (Mail::failures() != 0) {
+            $responseMessage = "Failed to send.";
+            return response()->json([
+                "success" => false,
+                "message" => $responseMessage,
+                "error" => $responseMessage,
+            ], 200);
+        }
+        $responseMessage = "Success to send.";
+        return response()->json([
+            "success" => true,
+            "message" => $responseMessage,
+        ], 200);
+    }
 
-        # Make the call to the client.
-        $mgClient->messages()->send($domain, $params);
-
+    public function resetPassword(Request $request) {
+       try {
+            $email = base64_decode($request->enc);
+            $user = User::where('email', $email)->first();
+            if(!$user) {
+                $responseMessage = "Failed to reset password.";
+                return response()->json([
+                    "success" => false,
+                    "message" => $responseMessage,
+                ], 200);
+            }
+            $user->password = Hash::make($request->password);
+            $user->save();
+            $responseMessage = "Success to reset password.";
+            return response()->json([
+                "success" => true,
+                "message" => $responseMessage,
+            ], 200);
+       } catch(Exception $e) {
+            $responseMessage = "Failed to reset password.";
+            return response()->json([
+                "success" => false,
+                "message" => $responseMessage,
+            ], 200);
+       }
     }
 }
 
