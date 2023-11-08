@@ -11,7 +11,8 @@ use App\Models\TextModel; // Ensure you create a corresponding Eloquent model fo
 use App\Models\User;
 use App\Models\Plan;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ForgotPasswordMail;
 
 class UserController extends BaseController
 {
@@ -162,7 +163,21 @@ class UserController extends BaseController
     }
     
     public function forgotPassword(Request $request) {
-        
+        // Mail::to("davidhandevdev@gmail.com")->send(new ForgotPasswordMail("234"));
+        // return "";
+        # Instantiate the client.
+        $mgClient = Mailgun::create('b78f8f54d5dc69013313fcc7f1c4823d-8c9e82ec-38049def', 'https://localhost:8000');
+        $domain = "davidhandevdev@gmailc.om";
+        $params = array(
+        'from'    => 'Excited User davidhandevdev@gmailc.om',
+        'to'      => 'apollo0114@outlook.com',
+        'subject' => 'Hello',
+        'text'    => 'Testing some Mailgun awesomness!'
+        );
+
+        # Make the call to the client.
+        $mgClient->messages()->send($domain, $params);
+
     }
 }
 

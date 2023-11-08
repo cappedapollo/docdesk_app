@@ -16,7 +16,7 @@ export const signIn = async (email: string, password: string) => {
 
 
 export const forgotPassword = async (email: string) => {
-  return await axios.post(BASE_URL + "/auth/forgot-password", {
+  return await axios.post(BASE_URL + "/auth/forgotPassword", {
     email,
   });
 };

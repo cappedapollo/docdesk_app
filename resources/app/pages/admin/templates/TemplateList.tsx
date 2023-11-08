@@ -10,11 +10,17 @@ import { useAppDispatch } from "@/store/hooks";
 import { SpoofingAction } from "@/store/actions/auth";
 import TemplateCard from "@/components/card/TemplateCard";
 import { sampleData } from "@/editor/data";
+import { DeleteTemplateAction } from "@/store/actions/templates";
 
 const inintalPaginationSettting = {
   current: 1,
   pageSize: 10,
 };
+
+interface PaginationSettingProp {
+  current: number;
+  pageSize: number;
+}
 
 interface PaginationDataProp {
   data: any[];
@@ -29,9 +35,8 @@ const Templates = () => {
     data: [],
     total: 0,
   });
-  const [paginationSetting, setPaginationSetting] = useState(
-    inintalPaginationSettting
-  );
+  const [paginationSetting, setPaginationSetting] =
+    useState<PaginationSettingProp>(inintalPaginationSettting);
   const [searchText, setSearchText] = useState("");
   const onChange = (current: number, pageSize: number) => {
     setPaginationSetting((draft) => ({ ...draft, current, pageSize }));
@@ -46,17 +51,23 @@ const Templates = () => {
   };
 
   useAsync(async () => {
-    setLoading(true);
-    const res = await axios.get(BASE_URL + "/admin/templates", {
-      params: { ...paginationSetting, search: searchText },
-    });
-    setLoading(false);
-    setPaginatedData(res.data);
+    makeFetching(searchText, paginationSetting);
   }, [searchText, paginationSetting]);
+
+  const makeFetching = useCallback(
+    async (searchText: string, paginationSetting: PaginationSettingProp) => {
+      setLoading(true);
+      const res = await axios.get(BASE_URL + "/admin/templates", {
+        params: { ...paginationSetting, search: searchText },
+      });
+      setLoading(false);
+      setPaginatedData(res.data);
+    },
+    []
+  );
 
   const onTapTemplate = useCallback(
     (id: number) => {
-      console.log(id);
       const pageData = JSON.parse(paginatedData.data[id].data);
       navigate("/admin/template-editor", {
         state: {
@@ -68,6 +79,12 @@ const Templates = () => {
     },
     [paginatedData.data]
   );
+
+  const onDeleteTemplate = useCallback((id: number) => {
+    dispatch(DeleteTemplateAction(id)).then(() => {
+      makeFetching(searchText, paginationSetting);
+    });
+  }, []);
 
   const handleClickCreate = () => {
     navigate("/admin/template-editor", {
@@ -116,11 +133,13 @@ const Templates = () => {
           paginatedData.data.map((template, index) => (
             <TemplateCard
               key={index}
+              id={template.id}
               templateId={index}
               image={template.img}
               title={template.name}
               size={template.layer_size}
               onClick={onTapTemplate}
+              onDeleteTemplate={onDeleteTemplate}
             />
           ))}
       </div>

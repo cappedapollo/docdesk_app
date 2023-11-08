@@ -3,6 +3,7 @@ import router from "@/route/router";
 import ToastNotifications from "@/components/ToastNotifications";
 import PartialLoading from "./components/PartialLoading";
 import { useAppSelector } from "./store/hooks";
+import BeaconComponent from "./components/BeaconComponent";
 
 function App() {
   const bLoading = useAppSelector((state) => state.shared.bLoading);
@@ -11,6 +12,7 @@ function App() {
       {bLoading && <PartialLoading />}
       <RouterProvider router={router} />
       <ToastNotifications />
+      <BeaconComponent />
     </div>
   );
 }

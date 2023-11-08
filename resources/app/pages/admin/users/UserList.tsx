@@ -111,7 +111,7 @@ const Users = () => {
                 <td className="p-2">{item.plan && item.plan.name}</td>
                 <td className="p-2">
                   <button
-                    className="bg-teal-600 text-white py-1 px-4 hover:bg-teal-800"
+                    className="bg-teal-600 text-white px-4 hover:bg-teal-800"
                     onClick={() => handleSpoofing(item.email)}
                   >
                     Login
@@ -119,7 +119,7 @@ const Users = () => {
                 </td>
                 <td className="p-2">
                   <button
-                    className="bg-amber-600 text-white py-1 px-4 hover:bg-amber-800"
+                    className="bg-amber-600 text-white px-4 hover:bg-amber-800"
                     onClick={() => navigate("/admin/users/edit/" + item.id)}
                   >
                     Edit
