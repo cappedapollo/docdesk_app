@@ -35,6 +35,10 @@ export const spoofing = async (email: string) => {
   });
 };
 
+export const cancelSpoofing = async () => {
+  return await axios.post(BASE_URL + "/admin/users/cancelSpoofing");
+};
+
 export const signUp = async (
   name: string,
   email: string,

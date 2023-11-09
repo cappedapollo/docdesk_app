@@ -4,9 +4,16 @@ namespace App\Models;
 use Auth;
 use DB;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Plan extends Model
 {
+
+	public function sub(): BelongsTo
+    {
+        return $this->belongsTo(Subscription::class, 'stripe_plan', "stripe_price");
+    }
+
 	static function setStripeToken($id, $type, $token){
 		DB::table('users')->where('id', $id)->update(['planid' => $type,'stripe_id'=>$token]);
 	}

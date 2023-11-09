@@ -8,7 +8,9 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Plan;
+use App\Models\Subscription;
 use Auth;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 
 
 class UserController extends BaseController
@@ -17,9 +19,15 @@ class UserController extends BaseController
         $pageNum = $request->get("current", 1);
         $pageSize = $request->get("pageSize", 10);
         $search = $request->get("search", "");
-        $data = User::whereNot("id", null)->with("designs");
+        $field = $request->get("field", "");
+        $direction = $request->get("direction", "");
+            
+        $data = User::whereNot("role", "admin")->with(['lasttoken'])->withCount('designs')->with(['sub.plan']);
         if($search != "") {
             $data = $data->where("name","like", "%$search%")->orWhere("email","like", "%$search%");
+        }
+        if($field != "") {
+            $data = $data->orderBy($field, $direction === "true"? "asc": "desc");
         }
         $total = $data->count();
         $data = $data->skip(($pageNum - 1) * $pageSize)->limit($pageSize)->get();
@@ -31,7 +39,7 @@ class UserController extends BaseController
     }
 
     public function getUser($id) {
-        $user = User::where("id", $id)->first();
+        $user = User::where("id", $id)->with("designs")->with("sub")->with("lasttoken")->first();
         $user['active'] = false;
         $user['cancelled'] = false;
         $user['ended'] = false;
@@ -78,6 +86,9 @@ class UserController extends BaseController
             $user['ended'] = false;
             $user['ends_at'] = null;
             $user['plan'] = null;
+
+            $user['spoofing'] = true;
+
             $plan = null;
             $subscriptionPlan = $user->subscription('default');
             if ($subscriptionPlan != null) {
@@ -105,5 +116,73 @@ class UserController extends BaseController
             ], 422);
         }
     }
+
+    public function cancelSpoofing(Request $request) {
+
+        auth()->guard('web')->logout();
+
+        $user = User::where('role', "admin")->first();
+
+        auth()->guard('web')->login($user);
+
+        if($user){
+            $accessToken = $user->createToken('authToken')->plainTextToken;
+            $responseMessage = "Login Successful";
+            
+            $user['active'] = false;
+            $user['cancelled'] = false;
+            $user['ended'] = false;
+            $user['ends_at'] = null;
+            $user['plan'] = null;
+
+            $plan = null;
+            $subscriptionPlan = $user->subscription('default');
+            if ($subscriptionPlan != null) {
+                $user['active'] = $subscriptionPlan->active();
+                $user['cancelled'] = $subscriptionPlan->canceled();
+                $user['ended'] = $subscriptionPlan->ended();
+                $user['ends_at'] = $subscriptionPlan->ends_at;
+                $user['plan'] = Plan::where('stripe_plan', $subscriptionPlan->stripe_price)->first();
+            }
+            unset($user['subscriptions']);
+
+            return response()->json([
+                    "success" => true,
+                    "message" => $responseMessage,
+                    "user" => $user,
+                    "token" => $accessToken
+                    ],200);
+        }
+        else{
+            $responseMessage = "Sorry, this user does not exist";
+            return response()->json([
+                "success" => false,
+                "message" => $responseMessage,
+                "error" => $responseMessage
+            ], 422);
+        }
+    }
+
+    public function cancelSubscription(Request $request) {
+
+        $subId = $request->subscriptionId;
+        $endAt = $request->endAt;
+
+		$subscription = Subscription::find($subId);
+
+        $subscription->ends_at = $endAt;
+        $subscription->save();
+
+        $user = User::find($subscription->user_id);
+
+		$user->cancelled_plan_name = $subscription->stripe_price;
+		$user->cancelled = 1;
+		$user->save();
+		return response()->json([
+            'success' => true,
+            'message' => "Subscription Canceled."
+        ], 200);
+    }
 }
+
 

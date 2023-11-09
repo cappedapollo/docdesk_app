@@ -33,10 +33,36 @@ class TemplateController extends BaseController
         }
         $total = $data->count();
         $data = $data->skip(($pageNum - 1) * $pageSize)->limit($pageSize)->get();
+
+        $res = [];
+        foreach($data as $item) {
+            $res[] = [
+                "id" => $item["id"],
+                "img" => $item["img"],
+                "layer_size" => $item["layer_size"],
+                "name" => $item["name"],
+            ];
+        }
+
         return response()->json([
             "success" => true,
-            "data" => $data,
+            "data" => $res,
             "total" => $total
             ],200);
     }
+
+    public function getTemplateDetail($id){
+        $data = Template::find($id);
+        if($data == null)
+            return response()->json([
+                "success" => false,
+                "message" => "Template does not exist."
+                ],200);
+        return  response()->json([
+            "success" => true,
+            "data" => $data,
+            ],200);
+    }
 }
+
+

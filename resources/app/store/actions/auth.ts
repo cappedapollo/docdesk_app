@@ -1,7 +1,7 @@
 import { signIn, signUp, signInWithToken } from "@/service/auth";
 import { setLoading, setNotifyMsg } from "@/store/reducers/share";
 import { setResponse } from "@/store/reducers/auth";
-import { spoofing } from "@/service/auth";
+import { spoofing, cancelSpoofing } from "@/service/auth";
 
 export const SignInWithTokenAction = () => {
   return async (dispatch) => {
@@ -54,6 +54,25 @@ export const SpoofingAction = (email: string, navigate: any) => {
   };
 };
 
+export const CancelSpoofingAction = (navigate) => {
+  return async (dispatch) => {
+    dispatch(setLoading(true));
+    try {
+      const {
+        data: { success, message, token, user },
+      } = await cancelSpoofing();
+      localStorage.setItem("userToken", token);
+      dispatch(setResponse({bSuccess: success, authUser: user}));
+      dispatch(setNotifyMsg(message));
+      if(success) navigate("/admin/users")
+
+    } catch (e) {
+      dispatch(setNotifyMsg(e.message));
+    }
+    dispatch(setLoading(false));
+  };
+};
+
 
 export const SignOutAction = () => {
   return async (dispatch) => {
@@ -73,11 +92,13 @@ export const SignUpAction = (
     dispatch(setLoading(true));
     try {
       const {
-        data: { message, success },
+        data: { success, message, token, user },
       } = await signUp(name, email, password, password_confirmation);
-
+      localStorage.setItem("userToken", token);
+      dispatch(setResponse({bSuccess: success, authUser: user}));
       dispatch(setNotifyMsg(message));
-      if(success) navigate("/signin")
+      if(success) navigate("/admin/users")
+
     } catch (e) {
       dispatch(setNotifyMsg(e.message));
     }

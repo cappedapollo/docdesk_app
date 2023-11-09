@@ -20,9 +20,20 @@ class TemplateController extends BaseController
         }
         $total = $data->count();
         $data = $data->skip(($pageNum - 1) * $pageSize)->limit($pageSize)->get();
+
+        $res = [];
+        foreach($data as $item) {
+            $res[] = [
+                "id" => $item["id"],
+                "img" => $item["img"],
+                "layer_size" => $item["layer_size"],
+                "name" => $item["name"],
+            ];
+        }
+
         return response()->json([
             "success" => true,
-            "data" => $data,
+            "data" => $res,
             "total" => $total
             ],200);
     }

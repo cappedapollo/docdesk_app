@@ -8,7 +8,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Laravel\Cashier\Billable;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 
 class User extends Authenticatable
@@ -46,32 +48,19 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function toArray()
-    {
-        $plan = null;
-        if($this->subscription('default') != null) {
-            $plan = Plan::where("stripe_plan", $this->subscription('default')->stripe_price)->first();
-        }
-        // Customize the JSON response attributes here
-        return [
-            'id' => $this->id,
-            'name' => $this->name,
-            'email' => $this->email,
-            'active' => $this->active,
-            "cancelled" => $this->cancelled,
-            "role" => $this->role,
-            'ended' => $this->ended,
-            'ends_at' => $this->ends_at,
-            "plan" => $plan,
-            'designs' => $this->designs,
-            'lastLogin' => $this->tokens->last(),
-            'createdAt' => $this->created_at
-        ];
-    }
-
     public function designs(): HasMany
     {
         return $this->hasMany(Design::class);
+    }
+
+    public function sub(): HasOne
+    {
+        return $this->hasOne(Subscription::class)->latestOfMany();
+    }
+
+    public function lasttoken(): HasOne
+    {
+        return $this->hasOne(PersonalAccessToken::class, 'tokenable_id', "id")->latestOfMany();
     }
 }
 

@@ -4,6 +4,7 @@ import Dropdown from "@/components/dropdown";
 import { useAppSelector } from "@/store/hooks";
 import { useAppDispatch } from "@/store/hooks";
 import { SignOutAction } from "@/store/actions/auth";
+import { CancelSpoofingAction } from "@/store/actions/auth";
 
 export default function Header() {
   const [navbar, setNavbar] = useState<boolean>(false);
@@ -28,6 +29,14 @@ export default function Header() {
   const isAdmin = useAppSelector(
     (state) => state.auth.authUser && state.auth.authUser.role === "admin"
   );
+
+  const spoofing = useAppSelector(
+    (state) => state.auth.authUser && state.auth.authUser.spoofing
+  );
+
+  const goToAdminAccount = () => {
+    dispatch(CancelSpoofingAction(navigate));
+  };
 
   return (
     <header>
@@ -88,7 +97,7 @@ export default function Header() {
                   <li>
                     <Link
                       to="/user/create-graphic"
-                      className="sm:text-xl sm:py-4 md:text-lg text-gray-600 hover:text-blue-600"
+                      className="sm:text-xl sm:py-4 md:text-lg text-gray-600 hover:text-blue-600 whitespace-nowrap"
                     >
                       Create a Graphic
                     </Link>
@@ -96,7 +105,7 @@ export default function Header() {
                   <li>
                     <Link
                       to="/user/saved-graphics"
-                      className="sm:text-xl sm:py-4 md:text-lg  text-gray-600 hover:text-blue-600"
+                      className="sm:text-xl sm:py-4 md:text-lg  text-gray-600 hover:text-blue-600 whitespace-nowrap"
                     >
                       Saved Graphics
                     </Link>
@@ -108,17 +117,27 @@ export default function Header() {
                     <li>
                       <Link
                         to="/admin"
-                        className="sm:text-xl sm:py-2 md:text-lg md:w-[100px] px-8 py-2 mr-8 text-white bg-blue-700 rounded-lg hover:bg-blue-800"
+                        className="sm:text-xl sm:py-2 md:text-lg px-8 py-2 mr-8 text-white bg-blue-700 rounded-lg hover:bg-blue-800 whitespace-nowrap"
                       >
                         Go Admin
                       </Link>
+                    </li>
+                  )}
+                  {spoofing && (
+                    <li>
+                      <button
+                        onClick={goToAdminAccount}
+                        className="sm:text-xl sm:py-2 md:text-lg px-8 py-2 mr-8 text-white bg-blue-700 rounded-lg hover:bg-blue-800 whitespace-nowrap"
+                      >
+                        Cancel Spoofing
+                      </button>
                     </li>
                   )}
                   {!subscribed && (
                     <li>
                       <Link
                         to="/user/go-pro"
-                        className="sm:text-xl sm:py-2 md:text-lg md:w-[100px] px-8 py-2 mr-8 text-white bg-blue-700 rounded-lg hover:bg-blue-800"
+                        className="sm:text-xl sm:py-2 md:text-lg md:w-[100px] px-8 py-2 mr-8 text-white bg-blue-700 rounded-lg hover:bg-blue-800 whitespace-nowrap"
                       >
                         Go Pro
                       </Link>
@@ -127,7 +146,7 @@ export default function Header() {
                   <li>
                     <Dropdown
                       button={
-                        <p className="sm:text-xl sm:py-2 md:text-lg  text-gray-600 hover:text-blue-600 cursor-pointer">
+                        <p className="sm:text-xl sm:py-2 md:text-lg  text-gray-600 hover:text-blue-600 cursor-pointer whitespace-nowrap">
                           My Account
                         </p>
                       }

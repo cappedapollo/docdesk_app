@@ -37,9 +37,12 @@ Route::group([
     
     Route::get('/frames', [FrameController::class, 'getAll']);
     
-    Route::get('/templates', [TemplateController::class, 'getAll']);
-
-    Route::get('/templates/list', [TemplateController::class, 'getTemplateList']);
+   
+    Route::prefix('templates')->group(function () {
+        Route::get('/', [TemplateController::class, 'getAll']);
+        Route::get('/list', [TemplateController::class, 'getTemplateList']);
+        Route::get('/detail/{id}', [TemplateController::class, 'getTemplateDetail']);
+    });
 
     Route::prefix('plan')->group(function () {
         Route::get('/getUserPlans', [PlanController::class, 'getUserPlans']);
@@ -57,6 +60,7 @@ Route::group([
         Route::post('/delete', [DesignController::class, 'deleteDesign']);
         Route::post('/duplicate', [DesignController::class, 'duplicateDesign']);
         Route::get('/list', [DesignController::class, 'listDesigns']);
+        Route::get('/detail/{id}', [DesignController::class, 'detailDesign']);
     });
     
     Route::prefix('admin')->group(function () {
@@ -64,6 +68,8 @@ Route::group([
             Route::get('/', [AdminUserController::class, 'getUsers']);
             Route::get('/{id}', [AdminUserController::class, 'getUser']);
             Route::post('/spoofing', [AdminUserController::class, 'spoofing']);
+            Route::post('/cancelSpoofing', [AdminUserController::class, 'cancelSpoofing']);
+            Route::post('/cancelSubscription', [AdminUserController::class, 'cancelSubscription']);
         });
         Route::prefix('templates')->group(function () { 
             Route::get('/', [AdminTemplateController::class, 'getTemplates']);

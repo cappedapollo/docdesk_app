@@ -11,6 +11,7 @@ import { SpoofingAction } from "@/store/actions/auth";
 import TemplateCard from "@/components/card/TemplateCard";
 import { sampleData } from "@/editor/data";
 import { DeleteTemplateAction } from "@/store/actions/templates";
+import { setNotifyMsg } from "@/store/reducers/share";
 
 const inintalPaginationSettting = {
   current: 1,
@@ -68,14 +69,22 @@ const Templates = () => {
 
   const onTapTemplate = useCallback(
     (id: number) => {
-      const pageData = JSON.parse(paginatedData.data[id].data);
-      navigate("/admin/template-editor", {
-        state: {
-          curDesignId: paginatedData.data[id].id,
-          curDesignName: paginatedData.data[id].name,
-          pageData: [pageData],
-        },
-      });
+      axios
+        .get(BASE_URL + "/templates/detail/" + paginatedData.data[id].id)
+        .then((res) => {
+          if (res.data.success) {
+            navigate("/admin/template-editor", {
+              state: {
+                curDesignId: -1,
+                curDesignName: res.data.data.name,
+                pageData: [JSON.parse(res.data.data.data)],
+              },
+            });
+          }
+        })
+        .catch((e) => {
+          dispatch(setNotifyMsg("Failed to load template."));
+        });
     },
     [paginatedData.data]
   );

@@ -20,6 +20,7 @@ import { useAsync } from "react-use";
 import axios, { BASE_URL } from "@/service/service";
 import Pagination from "rc-pagination";
 import PartialLoading from "@/components/PartialLoading";
+import { setNotifyMsg } from "@/store/reducers/share";
 
 const field: IFieldObject = {
   designName: {
@@ -37,6 +38,11 @@ const inintalPaginationSettting = {
 interface PaginationDataProp {
   data: any[];
   total: number;
+}
+
+interface PaginationSettingProp {
+  current: number;
+  pageSize: number;
 }
 
 const SavedGraphics = () => {
@@ -63,13 +69,20 @@ const SavedGraphics = () => {
   };
 
   useAsync(async () => {
-    setLoading(true);
-    const res = await axios.get(BASE_URL + "/design/list", {
-      params: { ...paginationSetting, search: searchText },
-    });
-    setLoading(false);
-    setPaginatedData(res.data);
+    makeFetching(paginationSetting, searchText);
   }, [searchText, paginationSetting]);
+
+  const makeFetching = useCallback(
+    async (paginationSetting: PaginationSettingProp, searchText: string) => {
+      setLoading(true);
+      const res = await axios.get(BASE_URL + "/design/list", {
+        params: { ...paginationSetting, search: searchText },
+      });
+      setLoading(false);
+      setPaginatedData(res.data);
+    },
+    []
+  );
 
   // const [bOpen, setOpen] = useState(true);
   // const category = ["Sample1", "Sample2", "Sample3"];
@@ -88,16 +101,24 @@ const SavedGraphics = () => {
 
   const onTapDesign = useCallback(
     (id: number) => {
-      const pageData = JSON.parse(paginatedData.data[id].data);
       dispatch(setCurDesignId(paginatedData.data[id].id));
       dispatch(setCurDesignName(paginatedData.data[id].name));
-      navigate("/user/editor", {
-        state: {
-          curDesignId: paginatedData.data[id].id,
-          curDesignName: paginatedData.data[id].name,
-          pageData: pageData,
-        },
-      });
+      axios
+        .get(BASE_URL + "/design/detail/" + paginatedData.data[id].id)
+        .then((res) => {
+          if (res.data.success) {
+            navigate("/user/editor", {
+              state: {
+                curDesignId: -1,
+                curDesignName: res.data.data.name,
+                pageData: JSON.parse(res.data.data.data),
+              },
+            });
+          }
+        })
+        .catch((e) => {
+          dispatch(setNotifyMsg("Failed to load design."));
+        });
     },
     [paginatedData.data]
   );
@@ -117,9 +138,11 @@ const SavedGraphics = () => {
 
   const handleDuplicate = useCallback(
     (id: number) => {
-      dispatch(DuplicateDesignAction(paginatedData.data[id].id));
+      dispatch(DuplicateDesignAction(paginatedData.data[id].id)).then(() => {
+        makeFetching(paginationSetting, searchText);
+      });
     },
-    [paginatedData.data]
+    [paginatedData.data, paginationSetting, searchText]
   );
 
   const handleRename = useCallback(

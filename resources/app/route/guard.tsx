@@ -21,8 +21,6 @@ export default function RequireAuth({ children }: { children: JSX.Element }) {
     }
   }, []);
 
-  const isAuthenticated = useAppSelector((state) => state.auth.bSuccess);
-
   if (!localStorage.getItem("userToken")) {
     return <Navigate to="/signin" state={{ from: location }} replace />;
   }

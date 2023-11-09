@@ -33,6 +33,7 @@ class UserController extends BaseController
             $user['plan'] = Plan::where('stripe_plan', $subscriptionPlan->stripe_price)->first();
         }
         unset($user['subscriptions']);
+
         return $user;
     }
 
@@ -62,14 +63,41 @@ class UserController extends BaseController
             "password" => Hash::make($request->password)
         ];
 
-        User::create($data);
+        $user = User::create($data);
 
-        $responseMessage = "Registration Successful";
+        $credentials = $request->only(["email","password"]);
 
-        return response()->json([
-            'success' => true,
-            'message' => $responseMessage
-        ], 200);
+        if($user){
+            if(!auth()->attempt($credentials)){
+                $responseMessage = "Invalid username or password";
+                
+                return response()->json([
+                    "success" => false,
+                    "message" => $responseMessage,
+                    "error" => $responseMessage
+                ], 200);
+            }
+            
+            $accessToken = auth()->user()->createToken('authToken')->plainTextToken;
+            $responseMessage = "Login Successful";
+
+            $user = $this->getSubscriptionUser();
+
+            return response()->json([
+                    "success" => true,
+                    "message" => $responseMessage,
+                    "user" => $user,
+                    "token" => $accessToken
+                    ],200);
+        }
+        else{
+            $responseMessage = "Sorry, this user does not exist";
+            return response()->json([
+                "success" => false,
+                "message" => $responseMessage,
+                "error" => $responseMessage
+            ], 200);
+        }
     }
 
     public function signIn(Request $request){

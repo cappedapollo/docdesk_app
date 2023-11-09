@@ -1,6 +1,6 @@
 import Pagination from "rc-pagination";
 import "rc-pagination/assets/index.css";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState, useEffect } from "react";
 import axios, { BASE_URL } from "@/service/service";
 import { useAsync } from "react-use";
 import PartialLoading from "@/components/PartialLoading";
@@ -8,6 +8,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import TemplateCard from "@/components/card/TemplateCard";
 import { useAppDispatch } from "@/store/hooks";
 import { SpoofingAction } from "@/store/actions/auth";
+import moment from "moment";
+import { setNotifyMsg } from "@/store/reducers/share";
 
 const inintalPaginationSettting = {
   current: 1,
@@ -22,6 +24,35 @@ const UserEdit = () => {
   const [paginationSetting, setPaginationSetting] = useState(
     inintalPaginationSettting
   );
+
+  const cancellable = useMemo(() => {
+    return (
+      userData && userData.active && !userData.ended && !userData.cancelled
+    );
+  }, [userData]);
+
+  const [renewableDate, setRenewableDate] = useState();
+
+  useEffect(() => {
+    if (userData && userData.active && !userData.ended && userData.cancelled) {
+      const date =
+        userData &&
+        userData.ends_at &&
+        moment(userData.ends_at.split("T")[0]).format("YYYY-MM-DD");
+      setRenewableDate(date);
+    } else if (
+      userData &&
+      userData.active &&
+      !userData.ended &&
+      !userData.cancelled
+    ) {
+      const type = userData.plan.slug === "pro-plan" ? "month" : "year";
+      const date = moment(userData.sub.created_at.split("T")[0])
+        .add(1, type)
+        .format("YYYY-MM-DD");
+      setRenewableDate(date);
+    }
+  }, [userData]);
 
   const dispatch = useAppDispatch();
 
@@ -60,13 +91,32 @@ const UserEdit = () => {
     [userData]
   );
 
+  const cancelSubscription = (id: string | undefined, renewableDate) => {
+    if (id)
+      axios
+        .post(BASE_URL + "/admin/users/cancelSubscription", {
+          subscriptionId: id,
+          endAt: renewableDate,
+        })
+        .then((res) => {
+          dispatch(setNotifyMsg(res.data.message));
+          makeFetching(id);
+        })
+        .catch(() => {
+          dispatch(setNotifyMsg("Failed to cancel subscription."));
+        });
+  };
+
   useAsync(async () => {
+    makeFetching(id);
+  }, [id]);
+
+  const makeFetching = useCallback(async (id: string | undefined) => {
     setLoading(true);
     const res = await axios.get(BASE_URL + "/admin/users/" + id);
     setLoading(false);
     setUserData(res.data);
-  }, [id]);
-
+  }, []);
   const handleSpoofing = (email: string) => {
     dispatch(SpoofingAction(email, navigate));
   };
@@ -94,37 +144,58 @@ const UserEdit = () => {
           <div className="grid grid-cols-2 grid-flow-row gap-4">
             <div>
               <label className="block">Renewable Date</label>
-              <div className="border focus:outline-none p-2 w-full h-10"></div>
+              <div className="border focus:outline-none p-2 w-full h-10">
+                <input
+                  type="date"
+                  disabled={!cancellable}
+                  className="w-full focus:outline-none"
+                  value={renewableDate}
+                  onChange={(e) => {
+                    setRenewableDate(e.target.value);
+                  }}
+                />
+              </div>
             </div>
             <div>
               <label className="block">User Joined</label>
               <div className="border focus:outline-none p-2 w-full h-10">
-                {userData && userData.createdAt}
+                {userData &&
+                  userData.created_at &&
+                  moment(userData.created_at.split("T")[0]).format(
+                    "YYYY-MM-DD"
+                  )}
               </div>
             </div>
             <div>
               <label className="block">Selected Plan</label>
               <div className="border focus:outline-none p-2 w-full h-10">
-                {userData && userData.plan && userData.plan.name}
+                {userData &&
+                  userData.plan &&
+                  (userData.plan.slug === "pro-plan" ? "Monthly" : "Annual")}
               </div>
             </div>
             <div>
               <label className="block">Last Login</label>
               <div className="border focus:outline-none p-2 w-full h-10">
                 {userData &&
-                  userData.lastLogin &&
-                  userData.lastLogin.created_at}
+                  userData.lasttoken &&
+                  userData.lasttoken.created_at &&
+                  moment(userData.lasttoken.created_at.split("T")[0]).format(
+                    "YYYY-MM-DD"
+                  )}
               </div>
             </div>
             <div>
-              {/* {userData &&
-                userData.active &&
-                !userData.ended &&
-                !userData.cancelled && (
-                  <button className="bg-amber-600 text-white py-1 px-4 hover:bg-amber-800">
-                    Cancel Subscription
-                  </button>
-                )} */}
+              {cancellable && (
+                <button
+                  className="bg-amber-600 text-white py-1 px-4 hover:bg-amber-800"
+                  onClick={() =>
+                    cancelSubscription(userData.sub.id, renewableDate)
+                  }
+                >
+                  Cancel Subscription
+                </button>
+              )}
             </div>
             <div></div>
           </div>

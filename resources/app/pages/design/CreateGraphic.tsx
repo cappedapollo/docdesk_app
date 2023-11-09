@@ -9,6 +9,7 @@ import axios, { BASE_URL } from "@/service/service";
 import PartialLoading from "@/components/PartialLoading";
 import Pagination from "rc-pagination";
 import { useAsync } from "react-use";
+import { setNotifyMsg } from "@/store/reducers/share";
 
 const inintalPaginationSettting = {
   current: 1,
@@ -66,17 +67,25 @@ const CreateGraphic = () => {
 
   const onTapTemplate = useCallback(
     (id: number) => {
-      console.log(id);
-      const pageData = JSON.parse(paginatedData.data[id].data);
       dispatch(setCurDesignId(-1));
       dispatch(setCurDesignName(paginatedData.data[id].name));
-      navigate("/user/editor", {
-        state: {
-          curDesignId: -1,
-          curDesignName: paginatedData.data[id].name,
-          pageData: [pageData],
-        },
-      });
+
+      axios
+        .get(BASE_URL + "/templates/detail/" + paginatedData.data[id].id)
+        .then((res) => {
+          if (res.data.success) {
+            navigate("/user/editor", {
+              state: {
+                curDesignId: -1,
+                curDesignName: res.data.data.name,
+                pageData: [JSON.parse(res.data.data.data)],
+              },
+            });
+          }
+        })
+        .catch((e) => {
+          dispatch(setNotifyMsg("Failed to load template."));
+        });
     },
     [paginatedData.data]
   );

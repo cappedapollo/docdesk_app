@@ -3,12 +3,24 @@
 namespace App\Models;
 use DB;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Subscription extends Model
 {
     // protected $casts = [
     //     'content' => 'array'
     // ];
+
+	public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+	public function plan(): HasOne
+    {
+        return $this->hasOne(Plan::class, 'stripe_plan', "stripe_price");
+    }
 
     static function getUserSubscribedPlan($user_id) {
 		$sub = DB::table('subscriptions')

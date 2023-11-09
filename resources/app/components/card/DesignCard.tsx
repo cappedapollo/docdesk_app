@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Card from "@/components/card";
 import CardMenu from "@/components/card/CardMenu";
+import LazyImage from "../LazyImage";
 
 const DesignCard = (props: {
   image: string;
@@ -36,7 +37,7 @@ const DesignCard = (props: {
           className="hover:cursor-pointer relative w-full "
           onClick={() => onClick(designId)}
         >
-          <img
+          <LazyImage
             src={image}
             className="mb-3 h-full w-full rounded-md 3xl:h-full 3xl:w-full"
             alt=""

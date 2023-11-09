@@ -8,6 +8,7 @@ import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "@/store/hooks";
 import { SpoofingAction } from "@/store/actions/auth";
+import ThSort from "@/components/ThSort";
 
 const inintalPaginationSettting = {
   current: 1,
@@ -22,6 +23,7 @@ interface PaginationDataProp {
 const Users = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const [sorter, setSorter] = useState({ field: "id", direction: true });
   const [loading, setLoading] = useState<Boolean>(false);
   const [paginatedData, setPaginatedData] = useState<PaginationDataProp>({
     data: [],
@@ -47,14 +49,22 @@ const Users = () => {
     dispatch(SpoofingAction(email, navigate));
   };
 
+  const onClickHeader = (field: string) => {
+    if (sorter.field === field) {
+      setSorter((draft) => ({ ...draft, direction: !draft.direction }));
+    } else {
+      setSorter(() => ({ field, direction: 1 }));
+    }
+  };
+
   useAsync(async () => {
     setLoading(true);
     const res = await axios.get(BASE_URL + "/admin/users", {
-      params: { ...paginationSetting, search: searchText },
+      params: { ...paginationSetting, search: searchText, ...sorter },
     });
     setLoading(false);
     setPaginatedData(res.data);
-  }, [searchText, paginationSetting]);
+  }, [searchText, paginationSetting, sorter]);
 
   return (
     <div className="w-full p-4 relative">
@@ -85,9 +95,30 @@ const Users = () => {
       <table className="w-full text-left mt-4">
         <thead className="bg-gray-100">
           <tr>
-            <th className="p-2">UserId</th>
-            <th className="p-2">Email</th>
-            <th className="p-2">Designs</th>
+            <th className="p-2">
+              <ThSort
+                sorter={sorter}
+                field={"id"}
+                label={"User Id"}
+                onClick={onClickHeader}
+              />
+            </th>
+            <th className="p-2">
+              <ThSort
+                sorter={sorter}
+                field={"email"}
+                label={"Email"}
+                onClick={onClickHeader}
+              />
+            </th>
+            <th className="p-2">
+              <ThSort
+                sorter={sorter}
+                field={"designs_count"}
+                label={"Designs"}
+                onClick={onClickHeader}
+              />
+            </th>
             <th className="p-2">LastLogin</th>
             <th className="p-2">Plan</th>
             <th className="p-2">Login</th>
@@ -101,14 +132,17 @@ const Users = () => {
               <tr key={item.id} className={`${i % 2 ? "bg-gray-50" : ""}`}>
                 <td className="p-2">{item.id}</td>
                 <td className="p-2">{item.email}</td>
-                <td className="p-2">{item.designs.length}</td>
+                <td className="p-2">{item.designs_count}</td>
                 <td className="p-2">
-                  {item.lastLogin &&
-                    moment(item.lastLogin.created_at).format(
+                  {item.lasttoken &&
+                    item.lasttoken.created_at &&
+                    moment(item.lasttoken.created_at).format(
                       "YYYY-MM-DD hh:mm:ss"
                     )}
                 </td>
-                <td className="p-2">{item.plan && item.plan.name}</td>
+                <td className="p-2">
+                  {item.sub && item.sub.plan && item.sub.plan.name}
+                </td>
                 <td className="p-2">
                   <button
                     className="bg-teal-600 text-white px-4 hover:bg-teal-800"
