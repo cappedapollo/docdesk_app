@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\Plan;
 use App\Models\Subscription;
 use Auth;
+use DB;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 
 
@@ -22,7 +23,14 @@ class UserController extends BaseController
         $field = $request->get("field", "");
         $direction = $request->get("direction", "");
             
-        $data = User::whereNot("role", "admin")->with(['lasttoken'])->withCount('designs')->with(['sub.plan']);
+        // $data = User::whereNot("role", "admin")->with(['lasttoken'])->withCount('designs')->with(['sub.plan']);
+        $data = DB::table('users')
+        ->select('users.*', 
+            DB::raw('(select count(*) from designs where users.id = designs.user_id) as designs_count'),
+            DB::raw('(select created_at from personal_access_tokens where users.id = personal_access_tokens.tokenable_id limit 1) as last_login'),
+            DB::raw('(select name from plans where plans.stripe_plan = (select stripe_price from subscriptions where subscriptions.user_id = users.id limit 1)) as plan_name')
+        );
+
         if($search != "") {
             $data = $data->where("name","like", "%$search%")->orWhere("email","like", "%$search%");
         }

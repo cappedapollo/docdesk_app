@@ -119,8 +119,22 @@ const Users = () => {
                 onClick={onClickHeader}
               />
             </th>
-            <th className="p-2">LastLogin</th>
-            <th className="p-2">Plan</th>
+            <th className="p-2">
+              <ThSort
+                sorter={sorter}
+                field={"last_login"}
+                label={"LastLogin"}
+                onClick={onClickHeader}
+              />
+            </th>
+            <th className="p-2">
+              <ThSort
+                sorter={sorter}
+                field={"plan_name"}
+                label={"Plan"}
+                onClick={onClickHeader}
+              />
+            </th>
             <th className="p-2">Login</th>
             <th className="p-2">Edit</th>
           </tr>
@@ -134,15 +148,10 @@ const Users = () => {
                 <td className="p-2">{item.email}</td>
                 <td className="p-2">{item.designs_count}</td>
                 <td className="p-2">
-                  {item.lasttoken &&
-                    item.lasttoken.created_at &&
-                    moment(item.lasttoken.created_at).format(
-                      "YYYY-MM-DD hh:mm:ss"
-                    )}
+                  {item.last_login &&
+                    moment(item.last_login).format("YYYY-MM-DD hh:mm:ss")}
                 </td>
-                <td className="p-2">
-                  {item.sub && item.sub.plan && item.sub.plan.name}
-                </td>
+                <td className="p-2">{item.plan_name}</td>
                 <td className="p-2">
                   <button
                     className="bg-teal-600 text-white px-4 hover:bg-teal-800"
