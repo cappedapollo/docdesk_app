@@ -47,7 +47,7 @@ Route::group([
     Route::prefix('plan')->group(function () {
         Route::get('/getUserPlans', [PlanController::class, 'getUserPlans']);
         Route::get('/getUserSubscription', [PlanController::class, 'getUserSubscription']);
-        Route::get('/getCustomer', [PlanController::class, 'getCustomer']);
+        Route::post('/getCustomer', [PlanController::class, 'getCustomer']);
         Route::post('/subscribe', [PlanController::class, 'subscribe']);
         Route::get('/payment/change/{plan}', [PlanController::class, 'changePlan']);
         Route::get('/payment-cancel', [PlanController::class, 'cancel']);

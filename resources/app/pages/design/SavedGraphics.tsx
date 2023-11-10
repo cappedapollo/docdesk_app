@@ -111,6 +111,9 @@ const SavedGraphics = () => {
               state: {
                 curDesignId: -1,
                 curDesignName: res.data.data.name,
+                curCategory: res.data.data.category,
+                curKeywords: res.data.data.keywords,
+                curDescription: res.data.data.description,
                 pageData: JSON.parse(res.data.data.data),
               },
             });

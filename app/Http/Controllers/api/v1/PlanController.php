@@ -76,10 +76,14 @@ class PlanController extends BaseController
 		]);
 	}
 
-    public function getcustomer(Request $request)
+    public function getCustomer(Request $request)
 	{
+		$cardHolderName = $request->cardHolderName;
 		$user = Auth::user();
-
+		if($cardHolderName) {
+			$user->name = $cardHolderName;
+			$user->save();
+		}
 		// $cancelled = false;
 		// $subscriptionPlan = $user->subscription('default');
 		// if ($subscriptionPlan != null) {

@@ -76,13 +76,14 @@ const UserEdit = () => {
   const onTapDesign = useCallback(
     (id: number) => {
       if (userData) {
-        console.log(userData.designs);
-        console.log(id);
         const pageData = JSON.parse(userData.designs[id].data);
         navigate("/user/editor", {
           state: {
             curDesignId: userData.designs[id].id,
             curDesignName: userData.designs[id].name,
+            curCategory: userData.designs[id].category,
+            curKeywords: userData.designs[id].keywords,
+            curDescription: userData.designs[id].description,
             pageData: pageData,
           },
         });

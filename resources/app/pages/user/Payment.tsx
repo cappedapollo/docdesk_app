@@ -46,19 +46,15 @@ const options = {
 
 const CardSetupForm = ({ plan, ...props }) => {
   const navigate = useNavigate();
-  const { email } = useAppSelector((state) =>
-    state.auth.bSuccess ? state.auth.authUser : {}
-  );
+  // const { email } = useAppSelector((state) =>
+  //   state.auth.bSuccess ? state.auth.authUser : {}
+  // );
   const stripe = useStripe();
   const elements = useElements();
   const [cardErr, setCardErr] = useState("");
   const [loading, setLoading] = useState(false);
   const [cardHolderName, setCardHolderName] = useState("");
   const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    setCardHolderName(email);
-  }, [email]);
 
   const handleCardSetup = async (event: any) => {
     event.preventDefault();
@@ -73,19 +69,24 @@ const CardSetupForm = ({ plan, ...props }) => {
       return;
     }
 
+    if (cardHolderName === "") {
+      dispatch(setNotifyMsg("Please input cardholder name."));
+      return;
+    }
+
     // Create the PaymentIntent and obtain clientSecret from your server endpoint
-    const res = await axios.get(BASE_URL + "/plan/getCustomer");
+    const res = await axios.post(BASE_URL + "/plan/getCustomer", {
+      cardHolderName,
+    });
 
     const data = res.data;
-
-    if (cardHolderName === "") return;
 
     stripe
       .confirmCardSetup(data, {
         payment_method: {
           card: elements.getElement(CardElement),
           billing_details: {
-            name: `${cardHolderName}(${email})`,
+            name: `${cardHolderName}`,
           },
         },
       })

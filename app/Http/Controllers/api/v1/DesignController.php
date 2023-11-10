@@ -121,7 +121,7 @@ class DesignController extends BaseController
         foreach($data as $item) {
             $res[] = [
                 "id" => $item["id"],
-                "img" => $item["img"],
+                "thumbnail" => $item["thumbnail"],
                 "layer_size" => $item["layer_size"],
                 "name" => $item["name"],
             ];

@@ -15,9 +15,10 @@ import {
   useReactForm,
 } from "@surinderlohat/react-form-validation";
 import InputField from "@/components/fields/InputField";
-import { setCurDesignName } from "@/store/reducers/design";
-import { BASE_URL } from "@/service/service";
-import { setCurDesignId } from "@/store/reducers/design";
+import { setCurDesignName, setCurDesignId } from "@/store/reducers/design";
+import { setCurCategory } from "@/store/reducers/design";
+import { setCurKeywords } from "@/store/reducers/design";
+import { setCurDescription } from "@/store/reducers/design";
 
 const field: IFieldObject = {
   designName: {
@@ -33,16 +34,31 @@ export default function EditorHome() {
   const changeForm = useReactForm(field);
   const location = useLocation();
   const {
-    state: { pageData, curDesignId: oId, curDesignName: oName },
+    state: {
+      pageData,
+      curDesignId: oId,
+      curDesignName: oName,
+      curCategory: oCategory,
+      curKeywords: oKeywords,
+      curDescription: oDescription,
+    },
   } = location;
 
   useEffect(() => {
     dispatch(setCurDesignId(oId));
     dispatch(setCurDesignName(oName));
+    dispatch(setCurCategory(oCategory));
+    dispatch(setCurKeywords(oKeywords));
+    dispatch(setCurDescription(oDescription));
   }, []);
 
   const curDesignId = useAppSelector((state) => state.designs.curDesignId);
   const curDesignName = useAppSelector((state) => state.designs.curDesignName);
+  const curCategory = useAppSelector((state) => state.designs.curCategory);
+  const curKeywords = useAppSelector((state) => state.designs.curKeywords);
+  const curDescription = useAppSelector(
+    (state) => state.designs.curDescription
+  );
 
   const dispatch = useAppDispatch();
 
