@@ -101,13 +101,16 @@ const CardSetupForm = ({ plan, ...props }) => {
             plan,
             tokenInput: result.setupIntent.payment_method,
           });
-          setLoading(false);
           const data = res.data;
           if (data.success) {
             dispatch(setNotifyMsg(data.message));
             dispatch(SignInWithTokenAction());
+            setLoading(false);
             navigate("/user/go-pro");
-          } else dispatch(setNotifyMsg(data.message));
+          } else {
+            setLoading(false);
+            dispatch(setNotifyMsg(data.message));
+          }
         }
       });
   };
