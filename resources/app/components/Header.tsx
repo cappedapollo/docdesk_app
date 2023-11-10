@@ -129,7 +129,7 @@ export default function Header() {
                         onClick={goToAdminAccount}
                         className="sm:text-xl sm:py-2 md:text-lg px-8 py-2 mr-8 text-white bg-blue-700 rounded-lg hover:bg-blue-800 whitespace-nowrap"
                       >
-                        Cancel Spoofing
+                        Logout
                       </button>
                     </li>
                   )}
