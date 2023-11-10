@@ -95,16 +95,13 @@ const CardSetupForm = ({ plan, ...props }) => {
         // return;
         if (result.error) {
           setLoading(false);
-
           dispatch(setNotifyMsg(result.error.message));
         } else {
-          setLoading(false);
-
           const res = await axios.post(BASE_URL + "/plan/subscribe", {
             plan,
             tokenInput: result.setupIntent.payment_method,
           });
-
+          setLoading(false);
           const data = res.data;
           if (data.success) {
             dispatch(setNotifyMsg(data.message));
