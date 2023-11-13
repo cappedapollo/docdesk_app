@@ -9,6 +9,9 @@ const EditorContent = (props: {
   pageData?: any;
   id: number;
   designName: string;
+  category: string;
+  keywords: string;
+  description: string;
 }) => {
   const { pageData } = props;
   const { query } = useEditor();
@@ -16,6 +19,9 @@ const EditorContent = (props: {
 
   const curDesignId = props.id;
   const curDesignName = props.designName;
+  const curCategory = props.category;
+  const curKeywords = props.keywords;
+  const curDescription = props.description;
   // const curDesignId = useAppSelector((state) => state.designs.curDesignId);
   // const curDesignName = useAppSelector((state) => state.designs.curDesignName);
 
@@ -39,9 +45,26 @@ const EditorContent = (props: {
           }
         });
       }
-      dispatch(SaveDesignAction(curDesignId, curDesignName, thumbnailImg, q));
+      dispatch(
+        SaveDesignAction(
+          curDesignId,
+          curDesignName,
+          curCategory,
+          curKeywords,
+          curDescription,
+          thumbnailImg,
+          q
+        )
+      );
     },
-    [curDesignId, curDesignName, query]
+    [
+      curDesignId,
+      curDesignName,
+      curCategory,
+      curKeywords,
+      curDescription,
+      query,
+    ]
   );
 
   const data = useMemo(() => {

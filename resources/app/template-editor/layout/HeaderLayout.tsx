@@ -6,6 +6,7 @@ import { setLoading } from "@/store/reducers/share";
 import { useNavigate } from "react-router-dom";
 
 interface HeaderLayoutProps {
+  curDesignName: string;
   openChangeName: () => void;
 }
 const HeaderLayout: ForwardRefRenderFunction<

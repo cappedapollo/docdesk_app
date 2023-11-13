@@ -134,10 +134,12 @@ const SavedGraphics = () => {
     [paginatedData.data]
   );
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = useCallback(() => {
     setOpenDeleteConfirm(false);
-    dispatch(DeleteDesignAction(selDesignId));
-  };
+    dispatch(DeleteDesignAction(selDesignId)).then(() => {
+      makeFetching(paginationSetting, searchText);
+    });
+  }, [paginationSetting, searchText, selDesignId]);
 
   const handleDuplicate = useCallback(
     (id: number) => {
@@ -157,16 +159,21 @@ const SavedGraphics = () => {
     [paginatedData.data]
   );
 
-  const handleChangeDesignName = (e: ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    dispatch(
-      RenameDesignAction(
-        selDesignId,
-        changeForm.getField("designName").getValue()
-      )
-    );
-    setOpenChangeName(false);
-  };
+  const handleChangeDesignName = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      e.preventDefault();
+      dispatch(
+        RenameDesignAction(
+          selDesignId,
+          changeForm.getField("designName").getValue()
+        )
+      ).then(() => {
+        makeFetching(paginationSetting, searchText);
+      });
+      setOpenChangeName(false);
+    },
+    [paginationSetting, searchText, selDesignId, changeForm]
+  );
 
   // const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
   //   SetSearchValue(e.target.value);

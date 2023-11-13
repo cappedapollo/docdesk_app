@@ -5,6 +5,7 @@ import { useAppDispatch } from "@/store/hooks";
 import { setLoading } from "@/store/reducers/share";
 
 interface HeaderLayoutProps {
+  curDesignName: string;
   openChangeName: () => void;
 }
 const HeaderLayout: ForwardRefRenderFunction<

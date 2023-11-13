@@ -75,7 +75,7 @@ const Templates = () => {
           if (res.data.success) {
             navigate("/admin/template-editor", {
               state: {
-                curDesignId: -1,
+                curDesignId: res.data.data.id,
                 curDesignName: res.data.data.name,
                 curCategory: res.data.data.category,
                 curKeywords: res.data.data.keywords,
@@ -153,6 +153,9 @@ const Templates = () => {
               image={template.img}
               title={template.name}
               size={template.layer_size}
+              description={template.description}
+              category={template.category}
+              keywords={template.keywords}
               onClick={onTapTemplate}
               onDeleteTemplate={onDeleteTemplate}
             />

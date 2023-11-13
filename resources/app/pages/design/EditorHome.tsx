@@ -174,6 +174,9 @@ export default function EditorHome() {
                   id={curDesignId}
                   pageData={pageData}
                   designName={curDesignName}
+                  category={curCategory}
+                  keywords={curKeywords}
+                  description={curDescription}
                 />
               </div>
               <div

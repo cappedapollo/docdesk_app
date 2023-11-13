@@ -20,7 +20,14 @@ class DesignController extends BaseController
         
         try{
             if($request->id == -1){
-                $design = new Design(['name'=>$request->designName, 'data' =>$request->data,'thumbnail' =>$thumbnail_path]);
+                $design = new Design([
+                    'name'=>$request->designName, 
+                    'data' =>$request->data,
+                    'thumbnail' =>$thumbnail_path,
+                    'description' => $request->description,
+                    'category' => $request->category,
+                    'keywords' => $request->keywords,
+                ]);
                 auth()->user()->designs()->save($design);    
             }
             else{
@@ -28,6 +35,9 @@ class DesignController extends BaseController
                 $design->name = $request->designName;
                 $design->thumbnail = $thumbnail_path;
                 $design->data = $request->data;
+                $design->description = $request->description;
+                $design->category = $request->category;
+                $design->keywords = $request->keywords;
                 $design->save();
             }    
             $responseMessage = "Saved Design!";
@@ -124,6 +134,9 @@ class DesignController extends BaseController
                 "thumbnail" => $item["thumbnail"],
                 "layer_size" => $item["layer_size"],
                 "name" => $item["name"],
+                "description" => $item["description"],
+                "keywords" => $item["keywords"],
+                "category" => $item["category"],
             ];
         }
 

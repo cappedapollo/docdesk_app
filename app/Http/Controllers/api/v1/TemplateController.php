@@ -41,6 +41,9 @@ class TemplateController extends BaseController
                 "img" => $item["img"],
                 "layer_size" => $item["layer_size"],
                 "name" => $item["name"],
+                "description" => $item["description"],
+                "keywords" => $item["keywords"],
+                "category" => $item["category"],
             ];
         }
 

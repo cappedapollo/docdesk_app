@@ -24,6 +24,9 @@ export const LoadTemplateListAction = (data: unknown) => {
 export const SaveTemplateAction = (
   id: number,
   templateName: string,
+  category: string,
+  keywords: string,
+  description: string,
   thumbnail: Blob | null,
   data: unknown
 ) => {
@@ -32,7 +35,7 @@ export const SaveTemplateAction = (
     try {
       const {
         data: { success, template_id, message },
-      } = await saveTemplate(id, templateName, thumbnail, data);
+      } = await saveTemplate(id, templateName, category, keywords, description, thumbnail, data);
       if (success) {
         // dispatch(setCurTemplateId(template_id));
       }

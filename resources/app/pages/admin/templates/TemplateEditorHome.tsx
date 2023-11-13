@@ -19,12 +19,19 @@ import { setCurDesignName, setCurDesignId } from "@/store/reducers/design";
 import { setCurCategory } from "@/store/reducers/design";
 import { setCurKeywords } from "@/store/reducers/design";
 import { setCurDescription } from "@/store/reducers/design";
+import Select from "react-select";
+import CreatableSelect from "react-select/creatable";
 
 const field: IFieldObject = {
   designName: {
     label: "Design Name",
     placeholder: "Enter your design name.",
     rules: [{ rule: "required", message: "This field is required" }],
+  },
+  description: {
+    label: "Description",
+    placeholder: "Enter your design description.",
+    rules: [],
   },
 };
 
@@ -52,11 +59,17 @@ export default function TemplateEditorHome() {
   }, []);
 
   const curDesignId = useAppSelector((state) => state.designs.curDesignId);
-  const curDesignName = useAppSelector((state) => state.designs.curDesignName);
-  const curCategory = useAppSelector((state) => state.designs.curCategory);
-  const curKeywords = useAppSelector((state) => state.designs.curKeywords);
+  const curDesignName = useAppSelector(
+    (state) => state.designs.curDesignName || "New Template"
+  );
+  const curCategory = useAppSelector(
+    (state) => state.designs.curCategory || ""
+  );
+  const curKeywords = useAppSelector(
+    (state) => state.designs.curKeywords || ""
+  );
   const curDescription = useAppSelector(
-    (state) => state.designs.curDescription
+    (state) => state.designs.curDescription || ""
   );
 
   const dispatch = useAppDispatch();
@@ -93,11 +106,22 @@ export default function TemplateEditorHome() {
     };
   }, []);
 
-  const handleChangeDesignName = (e: ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    dispatch(setCurDesignName(changeForm.getField("designName").getValue()));
-    setOpenChangeName(false);
-  };
+  const handleChangeDesignName = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      e.preventDefault();
+      const valid = Object.values(changeForm.getErrors()).every(
+        (v) => v === ""
+      );
+      if (valid) {
+        dispatch(
+          setCurDesignName(changeForm.getField("designName").getValue())
+        );
+        dispatch(setCurCategory(changeForm.getField("description").getValue()));
+        setOpenChangeName(false);
+      }
+    },
+    [changeForm]
+  );
 
   return (
     <div className="block relative">
@@ -127,9 +151,53 @@ export default function TemplateEditorHome() {
             curDesignName={curDesignName}
             openChangeName={() => {
               changeForm.getField("designName").setValue(curDesignName);
+              changeForm.getField("description").setValue(curDescription);
               setOpenChangeName(true);
             }}
           />
+          <div className="flex justify-around py-2 border-b-2">
+            <div className="flex gap-2 justify-center items-center">
+              <label>Category</label>
+              <Select
+                className="w-64"
+                placeholder="Select Category."
+                value={{ value: curCategory, label: curCategory }}
+                onChange={(o) => {
+                  dispatch(setCurCategory(o?.value));
+                }}
+                options={[
+                  { value: "", label: "-- Select --" },
+                  { value: "Retail", label: "Retail" },
+                  { value: "Restaurant", label: "Restaurant" },
+                  { value: "Utility", label: "Utility" },
+                  { value: "Healthcare", label: "Healthcare" },
+                  { value: "Auto", label: "Auto" },
+                  { value: "Business Service", label: "Business Service" },
+                  { value: "Other", label: "Other" },
+                ]}
+              />
+            </div>
+            <div className="flex gap-2 justify-center items-center">
+              <label>Keywords</label>
+              <CreatableSelect
+                placeholder="Input Keywords."
+                className="w-96"
+                value={
+                  !curKeywords || curKeywords === ""
+                    ? []
+                    : curKeywords
+                        .split(",")
+                        .map((t: string) => ({ value: t, label: t }))
+                }
+                onChange={(o) => {
+                  dispatch(
+                    setCurKeywords(o.map(({ value }) => value).join(","))
+                  );
+                }}
+                isMulti
+              />
+            </div>
+          </div>
           <div
             css={{
               display: "flex",
@@ -173,6 +241,9 @@ export default function TemplateEditorHome() {
                   id={curDesignId}
                   pageData={pageData}
                   designName={curDesignName}
+                  category={curCategory}
+                  keywords={curKeywords}
+                  description={curDescription}
                 />
               </div>
               <div
@@ -208,6 +279,14 @@ export default function TemplateEditorHome() {
                   extra="mb-3"
                   key={"designName"}
                   field={changeForm.getField("designName")}
+                  showLabel={true}
+                />
+              </div>
+              <div>
+                <InputField
+                  extra="mb-3"
+                  key={"description"}
+                  field={changeForm.getField("description")}
                   showLabel={true}
                 />
               </div>

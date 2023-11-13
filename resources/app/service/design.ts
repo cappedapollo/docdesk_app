@@ -3,6 +3,9 @@ import axios, { BASE_URL } from "@/service/service";
 export const saveDesign = async (
   id: number,
   designName: string,
+  category: string,
+  keywords: string,
+  description: string,
   thumbnailImg: Blob | null,
   data: unknown
 ) => {
@@ -11,6 +14,9 @@ export const saveDesign = async (
   imgData.append("file", thumbnailImg, "thumbnail");
   imgData.append("id", id);
   imgData.append("designName", designName);
+  imgData.append("category", category);
+  imgData.append("keywords", keywords);
+  imgData.append("description", description);
   imgData.append("data", JSON.stringify(data));
   return await axios.post(BASE_URL + "/design/save", imgData);
 };

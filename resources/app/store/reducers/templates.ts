@@ -4,6 +4,9 @@ import type { RootState } from "../../app/store";
 export interface Template {
   id: number;
   name: string;
+  category: string;
+  keywords: string;
+  description: string;
   size: string;
   data?: string;
   img: string;

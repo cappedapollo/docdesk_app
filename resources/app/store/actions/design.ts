@@ -11,6 +11,9 @@ import { setCurDesignId, setDesignList } from "@/store/reducers/design";
 export const SaveDesignAction = (
   id: number,
   designName: string,
+  category: string,
+  keywords: string,
+  description: string,
   thumbnail: Blob | null,
   data: unknown
 ) => {
@@ -19,7 +22,7 @@ export const SaveDesignAction = (
     try {
       const {
         data: { success, design_id, message },
-      } = await saveDesign(id, designName, thumbnail, data);
+      } = await saveDesign(id, designName, category, keywords, description, thumbnail, data);
       if (success) {
         dispatch(setCurDesignId(design_id));
       }

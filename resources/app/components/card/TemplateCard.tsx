@@ -1,6 +1,5 @@
 import { useState } from "react";
 import Card from "@/components/card";
-import CardMenu from "@/components/card/CardMenu";
 import LazyImage from "../LazyImage";
 
 const TemplateCard = (props: {
@@ -9,6 +8,9 @@ const TemplateCard = (props: {
   title: string;
   size: string;
   templateId: number;
+  description: string;
+  category: string;
+  keywords: string;
   extra?: string;
   onClick: (id: number) => void;
   onDeleteTemplate: (id: number) => void;
@@ -19,6 +21,8 @@ const TemplateCard = (props: {
     title,
     size,
     image,
+    category,
+    keywords,
     extra,
     onClick,
     onDeleteTemplate,
@@ -43,6 +47,13 @@ const TemplateCard = (props: {
           <p className="text-lg text-center font-bold text-navy-700">{title}</p>
           <p className="mt-1 text-center text-sm font-medium text-gray-600 md:mt-2">
             {size}
+          </p>
+          <p className="mt-1 text-center text-sm font-medium text-gray-600 md:mt-2">
+            Category: {category}
+          </p>
+
+          <p className="mt-1 text-center text-sm font-medium text-gray-600 md:mt-2">
+            Keywords: {keywords}
           </p>
           {!!onDeleteTemplate && (
             <button

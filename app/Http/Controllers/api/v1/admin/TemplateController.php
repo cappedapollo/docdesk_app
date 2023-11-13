@@ -28,6 +28,9 @@ class TemplateController extends BaseController
                 "img" => $item["img"],
                 "layer_size" => $item["layer_size"],
                 "name" => $item["name"],
+                "description" => $item["description"],
+                "keywords" => $item["keywords"],
+                "category" => $item["category"],
             ];
         }
 
@@ -49,7 +52,14 @@ class TemplateController extends BaseController
         
         try{
             if($request->id == -1){
-                $template = new Template(['name'=>$request->templateName, 'data' =>$request->data,'img' =>$thumbnail_path]);
+                $template = new Template([
+                    'name'=>$request->templateName, 
+                    'data' =>$request->data,
+                    'img' =>$thumbnail_path, 
+                    'description' => $request->description,
+                    'category' => $request->category,
+                    'keywords' => $request->keywords,
+                ]);
                 $template->save();
             }
             else{
@@ -57,6 +67,9 @@ class TemplateController extends BaseController
                 $template->name = $request->templateName;
                 $template->img = $thumbnail_path;
                 $template->data = $request->data;
+                $template->description = $request->description;
+                $template->category = $request->category;
+                $template->keywords = $request->keywords;
                 $template->save();
             }    
             $responseMessage = "Saved Template!";
