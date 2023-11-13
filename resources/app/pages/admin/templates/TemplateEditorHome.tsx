@@ -127,7 +127,7 @@ export default function TemplateEditorHome() {
     <div className="block relative">
       <Editor
         config={{
-          assetPath: "./assets",
+          assetPath: "/assets",
           frame: {
             defaultImage: {
               url: `/assets/images/frame-placeholder.png`,

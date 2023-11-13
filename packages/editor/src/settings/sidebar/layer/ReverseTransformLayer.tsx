@@ -4,6 +4,7 @@ import LayerElement from "../../../layers/core/LayerContext";
 import RenderLayer from "../../../layers/core/RenderLayer";
 import { boundingRect } from "../../../ultils/2d/boundingRect";
 import { getTransformStyle, LayerComponentProps } from "@lidojs/core";
+import LayerProvider from "../../../layers/core/LayerContext";
 
 interface ReverseTransformLayerProps {
   layer: Layer<LayerComponentProps>;
