@@ -25,6 +25,7 @@ const EditorContent = (props: {
   // const curDesignId = useAppSelector((state) => state.designs.curDesignId);
   // const curDesignName = useAppSelector((state) => state.designs.curDesignName);
 
+  console.log(curDesignId);
   const subscribed = useAppSelector(
     (state) =>
       state.auth.authUser &&

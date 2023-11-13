@@ -109,7 +109,7 @@ const SavedGraphics = () => {
           if (res.data.success) {
             navigate("/user/editor", {
               state: {
-                curDesignId: -1,
+                curDesignId: res.data.data.id,
                 curDesignName: res.data.data.name,
                 curCategory: res.data.data.category,
                 curKeywords: res.data.data.keywords,
