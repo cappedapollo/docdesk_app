@@ -13,7 +13,7 @@ import { setNotifyMsg } from "@/store/reducers/share";
 
 const inintalPaginationSettting = {
   current: 1,
-  pageSize: 10,
+  pageSize: 50,
 };
 
 interface PaginationDataProp {

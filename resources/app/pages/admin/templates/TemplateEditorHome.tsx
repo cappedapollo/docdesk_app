@@ -21,6 +21,7 @@ import { setCurKeywords } from "@/store/reducers/design";
 import { setCurDescription } from "@/store/reducers/design";
 import Select from "react-select";
 import CreatableSelect from "react-select/creatable";
+import TextareaField from "@/components/fields/TextareaField";
 
 const field: IFieldObject = {
   designName: {
@@ -116,7 +117,9 @@ export default function TemplateEditorHome() {
         dispatch(
           setCurDesignName(changeForm.getField("designName").getValue())
         );
-        dispatch(setCurCategory(changeForm.getField("description").getValue()));
+        dispatch(
+          setCurDescription(changeForm.getField("description").getValue())
+        );
         setOpenChangeName(false);
       }
     },
@@ -283,7 +286,7 @@ export default function TemplateEditorHome() {
                 />
               </div>
               <div>
-                <InputField
+                <TextareaField
                   extra="mb-3"
                   key={"description"}
                   field={changeForm.getField("description")}

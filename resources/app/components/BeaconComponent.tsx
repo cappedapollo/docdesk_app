@@ -1,37 +1,39 @@
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 
-const BeaconComponent = () => {
+const useBeacon = () => {
   useEffect(() => {
-    const initializeBeacon = () => {
+    // Beacon script initialization
+    const initBeacon = () => {
       const e = window;
       const t = document;
-      const n = window.Beacon || function () {};
+      const n = e.Beacon || function () {};
 
       function a() {
-        const e = t.getElementsByTagName("script")[0];
+        const s = t.getElementsByTagName("script")[0];
         const n = t.createElement("script");
         n.type = "text/javascript";
         n.async = true;
         n.src = "https://beacon-v2.helpscout.net";
-        e.parentNode.insertBefore(n, e);
+        s.parentNode.insertBefore(n, s);
+        console.log(s.parentElement);
       }
 
-      if (((e.Beacon = n), (n.readyQueue = []), "complete" === t.readyState)) {
+      if (((e.Beacon = n), (n.readyQueue = []), "complete" === t.readyState))
         return a();
-      }
 
-      if (e.attachEvent) {
-        e.attachEvent("onload", a);
-      } else {
-        e.addEventListener("load", a, false);
-      }
+      e.attachEvent
+        ? e.attachEvent("onload", a)
+        : e.addEventListener("load", a, false);
     };
 
-    initializeBeacon();
-    window.Beacon("init", "2e5a0eed-23bc-47fa-8a3f-62eee9b450ce");
-  }, []);
+    initBeacon();
 
-  return <div></div>;
+    setTimeout(() => {
+      window.Beacon("init", "2e5a0eed-23bc-47fa-8a3f-62eee9b450ce");
+    }, [1000]);
+
+    // Call the Beacon script initialization function
+  }, []); // Empty dependency array ensures this effect runs only once when the component mounts
 };
 
-export default BeaconComponent;
+export default useBeacon;

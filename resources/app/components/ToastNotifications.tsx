@@ -12,7 +12,6 @@ export default function ToastNotifications() {
     if (notifyMessage != "") notify();
     dispatch(setNotifyMsg(""));
   }, [notifyMessage]);
-  console.log(notifyMessage);
   return (
     <>
       <ToastContainer

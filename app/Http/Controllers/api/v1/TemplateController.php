@@ -25,7 +25,7 @@ class TemplateController extends BaseController
         //     "templates" => $templates
         // ], 200);
         $pageNum = $request->get("current", 1);
-        $pageSize = $request->get("pageSize", 10);
+        $pageSize = $request->get("pageSize", 50);
         $search = $request->get("search", "");
         $data = Template::whereNot("id", null);
         if($search != "") {

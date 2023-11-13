@@ -117,7 +117,7 @@ export default function Header() {
                     <li>
                       <Link
                         to="/admin"
-                        className="sm:text-xl sm:py-2 md:text-lg px-8 py-2 mr-8 text-white bg-blue-700 rounded-lg hover:bg-blue-800 whitespace-nowrap"
+                        className="sm:text-xl sm:py-2 md:text-lg px-8 py-2 mr-8 text-white bg-green-700 rounded-lg hover:bg-green-800 whitespace-nowrap"
                       >
                         Go Admin
                       </Link>
@@ -127,7 +127,7 @@ export default function Header() {
                     <li>
                       <button
                         onClick={goToAdminAccount}
-                        className="sm:text-xl sm:py-2 md:text-lg px-8 py-2 mr-8 text-white bg-blue-700 rounded-lg hover:bg-blue-800 whitespace-nowrap"
+                        className="sm:text-xl sm:py-2 md:text-lg px-8 py-2 mr-8 text-white bg-green-700 rounded-lg hover:bg-green-800 whitespace-nowrap"
                       >
                         Logout
                       </button>
@@ -137,7 +137,7 @@ export default function Header() {
                     <li>
                       <Link
                         to="/user/go-pro"
-                        className="sm:text-xl sm:py-2 md:text-lg md:w-[100px] px-8 py-2 mr-8 text-white bg-blue-700 rounded-lg hover:bg-blue-800 whitespace-nowrap"
+                        className="sm:text-xl sm:py-2 md:text-lg md:w-[100px] px-8 py-2 mr-8 text-white bg-green-700 rounded-lg hover:bg-green-800 whitespace-nowrap"
                       >
                         Go Pro
                       </Link>

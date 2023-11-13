@@ -118,7 +118,7 @@ class DesignController extends BaseController
         //     'designs'=>$designs
         // ],200);
         $pageNum = $request->get("current", 1);
-        $pageSize = $request->get("pageSize", 10);
+        $pageSize = $request->get("pageSize", 50);
         $search = $request->get("search", "");
         $data = Design::where("user_id", auth()->user()->id);
         if($search != "") {
