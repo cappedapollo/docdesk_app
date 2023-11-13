@@ -29,7 +29,7 @@ const useBeacon = () => {
     initBeacon();
 
     setTimeout(() => {
-      window.Beacon("init", "2e5a0eed-23bc-47fa-8a3f-62eee9b450ce");
+      window.Beacon("init", "0e86a569-f401-47bf-b7fb-5762a70bf4b8");
     }, [1000]);
 
     // Call the Beacon script initialization function

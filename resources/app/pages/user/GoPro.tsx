@@ -112,7 +112,7 @@ const GoPro = () => {
           return (
             <button
               onClick={onClickCancel}
-              className="mt-10 block w-full rounded-md bg-green-700 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-green-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              className="mt-10 block w-full rounded-md bg-gray-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
               <i className="fa fa-times-circle"></i> Cancel
             </button>
@@ -165,7 +165,7 @@ const GoPro = () => {
           return (
             <button
               onClick={onClickCancel}
-              className="mt-10 block w-full rounded-md bg-green-700 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-green-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              className="mt-10 block w-full rounded-md bg-gray-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
               <i className="fa fa-times-circle"></i>&nbsp;Cancel
             </button>
