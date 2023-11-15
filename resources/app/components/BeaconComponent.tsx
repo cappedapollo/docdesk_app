@@ -15,7 +15,6 @@ const useBeacon = () => {
         n.async = true;
         n.src = "https://beacon-v2.helpscout.net";
         s.parentNode.insertBefore(n, s);
-        console.log(s.parentElement);
       }
 
       if (((e.Beacon = n), (n.readyQueue = []), "complete" === t.readyState))
